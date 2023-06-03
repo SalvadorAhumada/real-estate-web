@@ -7,20 +7,23 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import reportWebVitals from './reportWebVitals';
-import Login from "./components/Login";
+import Login from "./Components/Login";
+import Main from "./Components/Main";
+import { UserContextProvider } from './Context/UserContext';
+import { OtherContextProvider } from './Context/OtherContext';
 
 const router = createBrowserRouter([
   {
-    path:"/login",
+    path: "/login",
     element: <Login />
   },
   {
     path: "/",
-    element:  <Navigate to="/login" />,
+    element: <Navigate to="/login" />,
   },
   {
-    path:"/test",
-    element: <div>This is a test</div>
+    path: "/main",
+    element: <Main />
   }
 ]);
 
@@ -28,7 +31,11 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-     <RouterProvider router={router} />
+    <OtherContextProvider>
+      <UserContextProvider>
+        <RouterProvider router={router} />
+      </UserContextProvider>
+    </OtherContextProvider>
   </React.StrictMode>
 );
 
