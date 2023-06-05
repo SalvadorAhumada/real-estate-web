@@ -1,26 +1,27 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet, Navigate } from 'react-router-dom';
+import Loading from "../Components/Shared/Loading";
 import { useContext } from "react";
 import { OtherContext } from "../Context/OtherContext";
-import Loading from "../Components/Shared/Loading";
 
 function PrivateRoutes() {
 
     const {
-        IS_LOGGED,
-        IS_AUTH,
-        SET_TOKEN
+        TOKEN
     } = useContext(OtherContext);
 
-    IS_AUTH().then(({jwt}) => {
-        SET_TOKEN(jwt)
-    }).catch(err => {
-        /* MUST <Navigate to="/login" /> */
-        console.log(err)
-    })
+    const RenderPrivateComponents = () => {
+        switch(TOKEN) {
+            case null:
+                return <Loading />;
+            case false:
+                return <Navigate to='/login' />;
+            default: 
+                return <Outlet />;
+        }
+    }
 
     return (
-        IS_LOGGED ? <Outlet /> : <Loading />
-
+        RenderPrivateComponents()
     )
 }
 

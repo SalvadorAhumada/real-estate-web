@@ -6,19 +6,24 @@ require("dotenv").config();
 const User = db.users;
 
 const MILISECONDS = 3600000;
-/*
-** api/users/authenticate
- */
+
 const authenticate = async (req, res) => {
-  let cookie = req.headers['cookie']
   
+  let cookie = req.headers['cookie'];
+
+  if(!cookie) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+
   let headers = cookie.split(' ');
   
   let jwt = headers.find(head => head.includes('jwt'))
+
+  if(!jwt) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
   
-  jwt = jwt.split("=")
+  jwt = jwt.split("=");
   
   jwt = jwt[1];
+  // If logged out set to false
+  if(jwt === "") jwt = false;
 
   return res.status(200).send({
     jwt
@@ -51,9 +56,7 @@ const signup = async (req, res) => {
     console.log(error);
   }
 };
-/*
-** api/user/login
- */
+
 const login = async (req, res) => {
 
   try {
@@ -90,8 +93,17 @@ const login = async (req, res) => {
   }
 };
 
+const logout = async(_req, res) => {
+
+  res.cookie('jwt', '', { expiresIn: new Date(0) });
+
+  return res.status(200).send({ jwt: false });
+}
+
+
 module.exports = {
   signup,
   login,
-  authenticate
+  authenticate,
+  logout
 };

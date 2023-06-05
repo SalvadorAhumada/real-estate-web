@@ -1,12 +1,25 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useState } from 'react';
 
 export const OtherContext = createContext({});
 
 export const OtherContextProvider = ({ children }) => {
+    // TOKEN is NULL at init, STRING at authenticated FALSE at not authenticated
+    const [TOKEN, SET_TOKEN] = useState(null);
 
-    const [TOKEN, SET_TOKEN] = useState('');
+    const LOG_OUT = async () => {
+        let auth = await fetch('http://localhost:3030/api/users/logout', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        auth = await auth.json();
+        SET_TOKEN('');
+        return auth;
+    }
 
-    const IS_AUTH = async () => {
+    const AUTHENTICATE_USER = async () => {
         let auth = await fetch('http://localhost:3030/api/users/authenticate', {
             method: 'POST',
             credentials: "include",
@@ -15,6 +28,7 @@ export const OtherContextProvider = ({ children }) => {
             },
         });
         auth = await auth.json();
+        SET_TOKEN(auth.jwt);
         return auth;
     }
 
@@ -25,11 +39,12 @@ export const OtherContextProvider = ({ children }) => {
     const IS_LOGGED = TOKEN != '';
 
     const otherContext = {
-        IS_AUTH,
+        AUTHENTICATE_USER,
         IS_LOGGED,
         REDIRECT_TO,
         SET_TOKEN,
         TOKEN,
+        LOG_OUT
     }
 
     return <OtherContext.Provider value={otherContext}>

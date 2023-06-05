@@ -15,21 +15,26 @@ import PersonIcon from '@mui/icons-material/Person';
 import { OtherContext } from "../Context/OtherContext";
 
 function ResponsiveAppBar() {
-    
-    const { IS_LOGGED } = useContext(OtherContext);
+
+    const {
+        IS_LOGGED,
+        LOG_OUT,
+        TOKEN
+    } = useContext(OtherContext);
 
     function showOptions() {
-        if(IS_LOGGED) return ["Inventario", "Usuarios", "Ejecutivos"]
+        if (typeof TOKEN === 'string') return ["Inventario", "Usuarios", "Ejecutivos"]
         return [];
     }
 
     const pages = showOptions();
     const settings = ["Finalizar Sesión"];
-
-    
-
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
+
+    const handeLogOut = () => {
+        LOG_OUT()
+    }
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -136,7 +141,7 @@ function ResponsiveAppBar() {
                         ))}
                     </Box>
 
-                    <Box sx={{ flexGrow: 0 }}>
+                    {TOKEN && <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <PersonIcon sx={{ color: 'white', display: { xs: 'none', md: 'flex' }, mr: 1 }} />
@@ -159,12 +164,12 @@ function ResponsiveAppBar() {
                             onClose={handleCloseUserMenu}
                         >
                             {settings.map((setting) => (
-                                 IS_LOGGED && <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                                    <Typography textAlign="center">{setting}</Typography>
+                                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                    <Typography onClick={handeLogOut} textAlign="center">{setting}</Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
-                    </Box>
+                    </Box>}
                 </Toolbar>
             </Container>
         </AppBar>

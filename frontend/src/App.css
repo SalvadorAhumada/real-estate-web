@@ -28,6 +28,14 @@
   color: #61dafb;
 }
 
+
+html,
+body {
+  height:100%;
+  background: linear-gradient(to top, #ffffff98, #ffffff7b), url('../public/img/background.jpg') no-repeat top center;
+  background-size: cover;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

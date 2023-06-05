@@ -1,10 +1,10 @@
-import react from "react";
+import Card from "./Card";
 
 function Main() {
 
   return (
     <div className="main">
-        You have been logged in succesfuly! Yay!
+       <Card />
     </div>
   );
 }

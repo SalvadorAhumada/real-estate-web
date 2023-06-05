@@ -17,7 +17,7 @@ app.use(cors({
 }));
 
 app.use(express.static('frontend/build'));
-
+// To drop tables and create new ones send 'true'
 shouldRestoreDB();
 
 app.use('/api/users', userRoutes);
