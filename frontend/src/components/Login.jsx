@@ -4,20 +4,29 @@ import { OtherContext } from "../Context/OtherContext";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const navigate = useNavigate();
 
   const { POST_USER } = useContext(UserContext);
-  const { REDIRECT_TO } = useContext(OtherContext);
+  
+  const {
+    REDIRECT_TO,
+    SET_TOKEN
+   } = useContext(OtherContext);
+  
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
-    event.preventDefault();
-    const fakeData = {
-      email: "salvador90@gmail.com",
-      password: "salvador90"
-    }
-    const response = await POST_USER(fakeData);
 
-    if(response.status === 201) {
+    event.preventDefault();
+
+    const fakeData = {
+      email: "ahumada1790@gmail.com",
+      password: "password01"
+    }
+
+    let response = await POST_USER(fakeData);
+
+    if(response.ok) { 
+      SET_TOKEN(response.token);
       REDIRECT_TO("/main", navigate);
     }
   };

@@ -25,3 +25,4 @@
 
 
     https://medium.com/@rachealkuranchie/node-js-authentication-with-postgresql-sequelize-and-express-js-20ae773da4c9
+    https://sequelize.org/docs/v7/other-topics/migrations/#configuration

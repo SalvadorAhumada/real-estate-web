@@ -4,20 +4,20 @@ export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }) => {
 
-    const POST_USER = async () => {
+    const POST_USER = async (fakeData) => {
 
-        const fakeData = {
-            email: "chavador90@gmail.com",
-            password: "123123"
-        }
-        /*http://localhost:3030/api/users/signup */
-        return fetch('http://localhost:3030/api/users/login', {
+        let response = await fetch('http://localhost:3030/api/users/login', {
             method: 'POST',
+            credentials: "include",
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(fakeData)
         });
+
+        response = response.json();
+
+        return response;
 
     };
 

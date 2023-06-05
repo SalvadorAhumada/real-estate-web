@@ -1,9 +1,32 @@
 const bcrypt = require("bcrypt");
-const db = require("../Models");
+const db = require("../../../models");
 const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
 const User = db.users;
 
+const MILISECONDS = 3600000;
+/*
+** api/users/authenticate
+ */
+const authenticate = async (req, res) => {
+  let cookie = req.headers['cookie']
+  
+  let headers = cookie.split(' ');
+  
+  let jwt = headers.find(head => head.includes('jwt'))
+  
+  jwt = jwt.split("=")
+  
+  jwt = jwt[1];
+
+  return res.status(200).send({
+    jwt
+  })
+}
+/*
+** api/user/signup
+ */
 const signup = async (req, res) => {
   try {
     const { userName, email, password } = req.body;
@@ -16,10 +39,10 @@ const signup = async (req, res) => {
 
     if (user) {
       let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
-        expiresIn: 1 * 24 * 60 * 60 * 1000,
+        expiresIn: 3600000,
       });
 
-      res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
+      res.cookie("jwt", token, { maxAge: 3600000, httpOnly: true });
       return res.status(201).send(user);
     } else {
       return res.status(409).send("Details are not correct");
@@ -28,7 +51,9 @@ const signup = async (req, res) => {
     console.log(error);
   }
 };
-
+/*
+** api/user/login
+ */
 const login = async (req, res) => {
 
   try {
@@ -48,21 +73,18 @@ const login = async (req, res) => {
 
     if (!isSame) return res.status(401).send("Password failed");
 
-    //if password is the same
-    //generate token with the user's id and the secretKey in the env file
-
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
-      expiresIn: 1 * 24 * 60 * 60 * 1000,
+      expiresIn: MILISECONDS
     });
 
-    //if password matches wit the one in the database
-    //go ahead and generate a cookie for the user
-    res.cookie("jwt", token, { maxAge: 1 * 24 * 60 * 60, httpOnly: true });
+    res.cookie("jwt", token, { maxAge: MILISECONDS , httpOnly: true });
     return res.status(201).send({
       message: "Login Successful",
-      email: user.email,
+      email,
       token,
+      ok: true
     });
+    
   } catch (error) {
     console.log(error);
   }
@@ -71,4 +93,5 @@ const login = async (req, res) => {
 module.exports = {
   signup,
   login,
+  authenticate
 };

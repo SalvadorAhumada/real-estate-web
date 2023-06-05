@@ -2,7 +2,8 @@ const express = require('express');
 const app = express();
 var cors = require('cors');
 const cookieParser = require('cookie-parser');
-const userRoutes = require ('./src/Database/Routes/userRoutes');
+const userRoutes = require('./src/Database/Routes/userRoutes');
+const { shouldRestoreDB } = require('./src/Database/Utils/index');
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -10,14 +11,14 @@ app.use(cookieParser())
 
 const PORT = process.env.PORT || 3030
 
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:3000",
+    credentials: true
+}));
 
 app.use(express.static('frontend/build'));
 
-// Drop tables
-/* db.sequelize.sync({ force: true }).then(() => {
-  console.log("db has been re sync")
-}) */
+shouldRestoreDB();
 
 app.use('/api/users', userRoutes);
 
