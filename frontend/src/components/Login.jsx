@@ -1,7 +1,7 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Context/UserContext";
 import { OtherContext } from "../Context/OtherContext";
-import { useNavigate } from "react-router-dom";
+/* import { useNavigate } from "react-router-dom"; */
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,9 +11,9 @@ import Typography from '@mui/material/Typography';
 import './Login.css';
 import TextField from '@mui/material/TextField';
 
-function Login() {
+function Login({ navigate }) {
 
-  const navigate = useNavigate();
+/*   const navigate = useNavigate(); */
 
   const { POST_USER } = useContext(UserContext);
 
@@ -23,21 +23,27 @@ function Login() {
     TOKEN
   } = useContext(OtherContext);
 
-  useEffect(() => {
-    if (typeof TOKEN === 'string') REDIRECT_TO("/main", navigate);
-  })
+  const [formData, setFormData] = useState({
+    email: 'ahumada1790@gmail.com',
+    password: 'password01',
+  });
 
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    if (TOKEN) REDIRECT_TO("/main", navigate);
+  })
 
   const handleSubmit = async (event) => {
 
     event.preventDefault();
 
-    const fakeData = {
-      email: "ahumada1790@gmail.com",
-      password: "password01"
-    }
-
-    let response = await POST_USER(fakeData);
+    let response = await POST_USER(formData);
 
     if (response.ok) {
       SET_TOKEN(response.token);
@@ -47,23 +53,25 @@ function Login() {
 
   return (
     <div className="login">
-      <Card sx={{ width: 400, borderRadius: 0 }}>
-        <CardMedia
-          sx={{ height: 140 }}
-          image="/img/placeholder.jpg"
-          title="Cluster"
-        />
-        <CardContent>
-          <Typography gutterBottom variant="h5" component="div">
-            CLUSTER
-          </Typography>
-          <TextField id="email" label="Correo Eletrónico" variant="standard" />
-          <TextField id="password" label="Contraseña" type="password" variant="standard" />
-        </CardContent>
-        <CardActions sx={{display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-        <Button onClick={handleSubmit} variant="contained">Iniciar Sesión</Button>
-        </CardActions>
-      </Card>
+      <form onSubmit={handleSubmit}>
+        <Card sx={{ width: 400, borderRadius: 0 }}>
+          <CardMedia
+            sx={{ height: 140 }}
+            image="/img/placeholder.jpg"
+            title="Cluster"
+          />
+          <CardContent>
+            <Typography gutterBottom variant="h5" component="div">
+              CLUSTER
+            </Typography>
+            <TextField id="email" name="email" label="Correo Eletrónico" variant="standard" onChange={handleChange} value={formData.email} />
+            <TextField id="password" name="password" label="Contraseña" type="password" variant="standard" onChange={handleChange} value={formData.password} />
+          </CardContent>
+          <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Button type="submit" onClick={handleSubmit} variant="contained">Iniciar Sesión</Button>
+          </CardActions>
+        </Card>
+      </form>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('clusters', {
+    await queryInterface.createTable('status', {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -12,10 +12,7 @@ module.exports = {
       name: {
         type: Sequelize.STRING
       },
-      color: {
-        type: Sequelize.STRING
-      },
-      code: {
+      color_hex: {
         type: Sequelize.STRING
       },
       createdAt: {
@@ -26,9 +23,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
-    });
+    }, {});
   },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('clusters');
+  async down(queryInterface, _Sequelize) {
+    await queryInterface.dropTable('status');
   }
 };

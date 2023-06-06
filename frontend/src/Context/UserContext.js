@@ -4,7 +4,7 @@ export const UserContext = createContext({});
 
 export const UserContextProvider = ({ children }) => {
 
-    const POST_USER = async (fakeData) => {
+    const POST_USER = async (data) => {
 
         let response = await fetch('http://localhost:3030/api/users/login', {
             method: 'POST',
@@ -12,7 +12,7 @@ export const UserContextProvider = ({ children }) => {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(fakeData)
+            body: JSON.stringify(data)
         });
 
         response = response.json();

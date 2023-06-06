@@ -2,5 +2,22 @@
     height: 80vh;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+.card-modifier {
+    width: 345px;
+    border-radius: 0;
+    cursor: pointer;
+    transition:  0.2s;
+}
+
+.card-modifier:hover {
+    transform: scale(1.05);
+    transition: 0.2s;
+}
+
+div.MuiCardContent-root.css-1i9wt8r-MuiCardContent-root {
+    padding: 0;
 }

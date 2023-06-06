@@ -29,6 +29,8 @@ module.exports = {
           m2total: getData(data),
           price: getData(data),
           otherData : getData(data),
+          clusterId: getData(data),
+          statusId: getData(data),
           createdAt: new Date(),
           updatedAt: new Date()
         })

@@ -1,34 +1,42 @@
-import * as React from 'react';
+import { useContext } from "react";
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import ReadMoreIcon from '@mui/icons-material/ReadMore';
+import TableShell from './Shared/TableShell';
 import './Card.css';
+import { OtherContext } from "../Context/OtherContext";
 
-export default function MediaCard() {
+export default function MediaCard({ cluster, navigate }) {
+
+  const {
+    REDIRECT_TO,
+  } = useContext(OtherContext);
+
+  const dataHandler = (data) => {
+    const result = {...data};
+    delete result.id;
+    delete result.name;
+    return result;  
+  }
+
+  const selectClusterHandler = () => {
+    REDIRECT_TO(`/main/detail/${cluster.name.toLowerCase()}`, navigate);
+  }
+
   return (
-    <Card sx={{ width: 345, borderRadius: 0 }}>
+    <Card className="card-modifier"onClick={selectClusterHandler}>
       <CardMedia
         sx={{ height: 140 }}
         image="/img/placeholder.jpg"
         title="Cluster"
       />
-      <CardContent>
+      <CardContent sx={{ padding:0 }}>
         <Typography gutterBottom variant="h5" component="div">
-          Nombre
+          {cluster.name}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-            TABLE DE UNIDADES
-        </Typography>
+        <TableShell data={cluster} dataHandler={dataHandler}/>
       </CardContent>
-      <CardActions>
-        <Button>
-            <ReadMoreIcon/>
-        </Button>
-      </CardActions>
     </Card>
   );
 }

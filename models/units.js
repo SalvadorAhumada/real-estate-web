@@ -26,5 +26,11 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'units',
   });
+
+  units.associate = function(models) {
+    units.belongsTo(models.clusters)
+    units.belongsTo(models.status)
+  }
+  
   return units;
 };

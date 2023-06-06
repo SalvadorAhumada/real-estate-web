@@ -3,7 +3,7 @@ const db = require("../../../models");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
-const User = db.users;
+const USER = db.users;
 
 const MILISECONDS = 3600000;
 
@@ -40,7 +40,7 @@ const signup = async (req, res) => {
       email,
       password: await bcrypt.hash(password, 10),
     };
-    const user = await User.create(data);
+    const user = await USER.create(data);
 
     if (user) {
       let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
@@ -63,7 +63,7 @@ const login = async (req, res) => {
 
     const { email, password } = req.body;
 
-    const user = await User.findOne({
+    const user = await USER.findOne({
       where: {
         email: email
       }

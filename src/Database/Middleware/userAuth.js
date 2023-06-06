@@ -29,6 +29,28 @@ const User = db.users;
  }
 };
 
+const authenticateUser = async(req,res,next) => {
+  
+    let cookie = req.headers['cookie'];
+  
+    if(!cookie) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+  
+    let headers = cookie.split(' ');
+    
+    let jwt = headers.find(head => head.includes('jwt'))
+  
+    if(!jwt) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+    
+    jwt = jwt.split("=");
+    
+    jwt = jwt[1];
+    // If logged out set to false
+    if(jwt === "") return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+
+    next();
+}
+
  module.exports = {
  saveUser,
+ authenticateUser
 };

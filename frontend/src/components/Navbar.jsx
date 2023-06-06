@@ -14,16 +14,16 @@ import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
 import { OtherContext } from "../Context/OtherContext";
 
-function ResponsiveAppBar() {
+function Navbar({ navigate }) {
 
     const {
-        IS_LOGGED,
         LOG_OUT,
-        TOKEN
+        TOKEN,
+        REDIRECT_TO
     } = useContext(OtherContext);
 
     function showOptions() {
-        if (typeof TOKEN === 'string') return ["Inventario", "Usuarios", "Ejecutivos"]
+        if (TOKEN) return ["Inicio", "Usuarios", "Ejecutivos"]
         return [];
     }
 
@@ -43,7 +43,12 @@ function ResponsiveAppBar() {
         setAnchorElUser(event.currentTarget);
     };
 
-    const handleCloseNavMenu = () => {
+    const handleCloseNavMenu = (page) => {
+        switch(page) {
+            case 'Inicio':
+                REDIRECT_TO('/main', navigate);
+            break;
+        }
         setAnchorElNav(null);
     };
 
@@ -133,7 +138,7 @@ function ResponsiveAppBar() {
                         {pages.map((page) => (
                             <Button
                                 key={page}
-                                onClick={handleCloseNavMenu}
+                                onClick={() => handleCloseNavMenu(page)}
                                 sx={{ my: 2, color: 'white', display: 'block' }}
                             >
                                 {page}
@@ -175,4 +180,4 @@ function ResponsiveAppBar() {
         </AppBar>
     );
 }
-export default ResponsiveAppBar;
+export default Navbar;
