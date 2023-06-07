@@ -1,13 +1,13 @@
 import { Outlet, Navigate } from 'react-router-dom';
 import Loading from "../Components/Shared/Loading";
 import { useContext } from "react";
-import { OtherContext } from "../Context/OtherContext";
+import { UserContext } from '../Context/UserContext';
 
 function PrivateRoutes() {
 
     const {
         TOKEN
-    } = useContext(OtherContext);
+    } = useContext(UserContext);
 
     const RenderPrivateComponents = () => {
         switch(TOKEN) {

@@ -1,16 +1,18 @@
 //importing modules
 const express = require('express')
 const unitController = require('../Controllers/unitController')
-const { all, count, cluster, clusters } = unitController
+const { 
+    all,
+    status,
+    update_status
+ } = unitController
 const router = express.Router();
 const userAuth = require('../Middleware/userAuth');
 
 router.get('/', userAuth.authenticateUser, all);
 
-router.get('/count', userAuth.authenticateUser, count);
+router.get('/status', userAuth.authenticateUser, status);
 
-router.get('/clusters', userAuth.authenticateUser, clusters);
-
-router.get('/cluster/:clusterId', userAuth.authenticateUser, cluster);
+router.post('/update_status', userAuth.authenticateUser, update_status);
 
 module.exports = router

@@ -4,7 +4,6 @@ import {
   Navigate
 } from "react-router-dom";
 import { useContext, useEffect } from "react";
-import { OtherContext } from "./Context/OtherContext";
 import { useNavigate } from "react-router-dom";
 import PrivateRoutes from "./Utils/ProtectedRoutes";
 import Login from "./Components/Login";
@@ -14,6 +13,8 @@ import NotFound from "./Components/Shared/NotFound";
 import DetailList from './Components/DetailList';
 import Navbar from "./Components/Navbar";
 import './App.css';
+import { UserContext } from "./Context/UserContext";
+import Snack from './Components/Shared/Snack';
 
 function App() {
 
@@ -21,7 +22,7 @@ function App() {
 
   const {
     AUTHENTICATE_USER,
-  } = useContext(OtherContext);
+  } = useContext(UserContext);
 
   useEffect(() => {
     AUTHENTICATE_USER();
@@ -41,6 +42,7 @@ function App() {
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <Snack/>
     </div>
   );
 }

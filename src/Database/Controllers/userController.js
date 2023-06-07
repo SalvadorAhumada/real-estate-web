@@ -6,27 +6,29 @@ require("dotenv").config();
 const USER = db.users;
 
 const MILISECONDS = 3600000;
-
+/*
+** api/users/authenticate
+ */
 const authenticate = async (req, res) => {
-  
-  let cookie = req.headers['cookie'];
 
-  if(!cookie) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+  let cookies = req.headers['cookie'];
 
-  let headers = cookie.split(' ');
-  
-  let jwt = headers.find(head => head.includes('jwt'))
+  cookies = cookies.split(";");
 
-  if(!jwt) return res.status(403).send({ jwt: false, msg: "Not authenticated" });
-  
-  jwt = jwt.split("=");
-  
-  jwt = jwt[1];
-  // If logged out set to false
-  if(jwt === "") jwt = false;
+  cookies.forEach(cookie => {
 
-  return res.status(200).send({
-    jwt
+    if (cookie.includes("ar3djwt")) {
+
+      let value = cookie.split("=")[1];
+      if (value) {
+        return res.status(200).send({
+          jwt: value
+        })
+      } else {
+        return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+      }
+    }
+
   })
 }
 /*
@@ -47,7 +49,7 @@ const signup = async (req, res) => {
         expiresIn: 3600000,
       });
 
-      res.cookie("jwt", token, { maxAge: 3600000, httpOnly: true });
+      res.cookie("ar3djwt", token, { maxAge: 3600000, httpOnly: true });
       return res.status(201).send(user);
     } else {
       return res.status(409).send("Details are not correct");
@@ -70,32 +72,32 @@ const login = async (req, res) => {
 
     });
 
-    if (!user) return res.status(401).send("No user found")
+    if (!user) return res.status(401).send({ error: true, msg: "Error con correo o contraseña" })
 
     const isSame = await bcrypt.compare(password, user.password);
 
-    if (!isSame) return res.status(401).send("Password failed");
+    if (!isSame) return res.status(401).send({ error: true, msg: "Error con correo o contraseña" });
 
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: MILISECONDS
     });
 
-    res.cookie("jwt", token, { maxAge: MILISECONDS , httpOnly: true });
+    res.cookie("ar3djwt", token, { maxAge: MILISECONDS, httpOnly: true });
     return res.status(201).send({
       message: "Login Successful",
       email,
       token,
       ok: true
     });
-    
+
   } catch (error) {
     console.log(error);
   }
 };
 
-const logout = async(_req, res) => {
+const logout = async (_req, res) => {
 
-  res.cookie('jwt', '', { expiresIn: new Date(0) });
+  res.cookie('ar3djwt', '', { expiresIn: new Date(0) });
 
   return res.status(200).send({ jwt: false });
 }

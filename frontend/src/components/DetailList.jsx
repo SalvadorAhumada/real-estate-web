@@ -1,32 +1,41 @@
 import { useContext, useEffect } from "react";
 import { OtherContext } from "../Context/OtherContext";
 import { useParams } from "react-router-dom";
+import ListUnits from './ListUnits';
+import Typography from '@mui/material/Typography';
 
 function DetailList() {
 
   const { clusterName } = useParams();
 
-  console.log(clusterName);
-
   const {
     GET_CLUSTERS,
     GET_CLUSTERS_UNITS,
-    CLUSTER_UNITS
+    CLUSTER_UNITS,
+    CLUSTERS
   } = useContext(OtherContext);
 
-  useEffect(()=> {
-    GET_CLUSTERS().then(({ clusters }) => {
-      const selectedCluster = clusters.find(c => c.name === clusterName.toUpperCase());
-      GET_CLUSTERS_UNITS(selectedCluster.id)
-    })
-  },[])
+  useEffect(() => {
+    GET_CLUSTERS()
+  }, [])
 
-  console.log(CLUSTER_UNITS);
+  useEffect(() => {
+
+    if (CLUSTERS.length !== 0) {
+      const selectedCluster = CLUSTERS.find(c => c.name === clusterName.toUpperCase());
+      GET_CLUSTERS_UNITS(selectedCluster.id)
+    }
+
+  }, [CLUSTERS])
+
+  const name = CLUSTER_UNITS[0] ? CLUSTER_UNITS[0].cluster.name : '';
 
   return (
     <div className="detail-list">
-        <p>Yay! detail list</p>
-        {JSON.stringify(CLUSTER_UNITS)}
+      <Typography gutterBottom variant="h1" component="div">
+        {name}
+      </Typography>
+      <ListUnits data={CLUSTER_UNITS} />
     </div>
   );
 }

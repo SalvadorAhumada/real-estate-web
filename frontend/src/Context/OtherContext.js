@@ -3,15 +3,23 @@ import { createContext, useState } from 'react';
 export const OtherContext = createContext({});
 
 export const OtherContextProvider = ({ children }) => {
-    // TOKEN is NULL at init, STRING at authenticated FALSE at not authenticated
-    const [TOKEN, SET_TOKEN] = useState(null);
 
     const [CLUSTERS, SET_CLUSTERS] = useState([]);
 
+    const [SNACK, SET_SNACK] = useState({
+        value: null,
+        message: '',
+        severity: null
+    });
+
     const [CLUSTER_UNITS, SET_CLUSTER_UNITS] = useState([]);
 
+    const FORMAT_CURRENCY = (amount) => {
+        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
+    }
+
     const GET_CLUSTERS_UNITS = async (clusterId) => {
-        let units = await fetch(`http://localhost:3030/api/units/cluster/${clusterId}`, {
+        let units = await fetch(`http://localhost:3030/api/clusters/${clusterId}`, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -24,7 +32,7 @@ export const OtherContextProvider = ({ children }) => {
     }
 
     const GET_CLUSTERS = async () => {
-        let clusters = await fetch('http://localhost:3030/api/units/clusters', {
+        let clusters = await fetch('http://localhost:3030/api/clusters/', {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -36,46 +44,19 @@ export const OtherContextProvider = ({ children }) => {
         return clusters;
     }
 
-    const LOG_OUT = async () => {
-        let auth = await fetch('http://localhost:3030/api/users/logout', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        auth = await auth.json();
-        SET_TOKEN('');
-        return auth;
-    }
-
-    const AUTHENTICATE_USER = async () => {
-        let auth = await fetch('http://localhost:3030/api/users/authenticate', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        auth = await auth.json();
-        SET_TOKEN(auth.jwt);
-        return auth;
-    }
-
     const REDIRECT_TO = (url, navigate) => {
         navigate(url, { replace: true });
     }
 
     const otherContext = {
-        AUTHENTICATE_USER,
-        REDIRECT_TO,
-        SET_TOKEN,
-        TOKEN,
-        LOG_OUT,
         CLUSTERS,
+        CLUSTER_UNITS,
+        FORMAT_CURRENCY,
         GET_CLUSTERS,
         GET_CLUSTERS_UNITS,
-        CLUSTER_UNITS
+        REDIRECT_TO,
+        SNACK,
+        SET_SNACK
     }
 
     return <OtherContext.Provider value={otherContext}>

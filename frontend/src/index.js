@@ -8,20 +8,36 @@ import reportWebVitals from './reportWebVitals';
 import { UserContextProvider } from './Context/UserContext';
 import { OtherContextProvider } from './Context/OtherContext';
 import { UnitContextProvider } from "./Context/UnitContext";
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const theme = createTheme({
+  typography: {
+    fontFamily: 'Pathway Extreme',
+    h1: {
+      fontFamily: 'Pathway Extreme',
+      fontSize: '2rem',
+      fontWeight: 'bolder',
+      margin: '1rem'
+    }
+  },
+});
+
 root.render(
   <React.StrictMode>
-    <UnitContextProvider>
-      <OtherContextProvider>
-        <UserContextProvider>
-          <Router>
-            <App />
-          </Router>
-        </UserContextProvider>
-      </OtherContextProvider>
-    </UnitContextProvider>
+    <ThemeProvider theme={theme}>
+      <UnitContextProvider>
+        <OtherContextProvider>
+          <UserContextProvider>
+            <Router>
+              <App />
+            </Router>
+          </UserContextProvider>
+        </OtherContextProvider>
+      </UnitContextProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
 

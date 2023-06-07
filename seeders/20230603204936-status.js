@@ -9,19 +9,19 @@ module.exports = {
         return queryInterface.bulkInsert('status', [
             {
                 name: 'DISPONIBLE',
-                color_hex: '#35ce41',
+                color_hex: '#16c624',
                 createdAt: new Date(),
                 updatedAt: new Date()
               },
               {
                 name: 'VENDIDO',
-                color_hex: '#cd110f',
+                color_hex: '#a96968',
                 createdAt: new Date(),
                 updatedAt: new Date()
               },
               {
                 name: 'RESERVADO',
-                color_hex: '#cd8e0f',
+                color_hex: '#ffcf6e',
                 createdAt: new Date(),
                 updatedAt: new Date()
               },

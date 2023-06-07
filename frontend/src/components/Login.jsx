@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../Context/UserContext";
 import { OtherContext } from "../Context/OtherContext";
-/* import { useNavigate } from "react-router-dom"; */
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -13,19 +12,20 @@ import TextField from '@mui/material/TextField';
 
 function Login({ navigate }) {
 
-/*   const navigate = useNavigate(); */
-
-  const { POST_USER } = useContext(UserContext);
+  const {
+    POST_USER,
+    SET_TOKEN,
+    TOKEN
+  } = useContext(UserContext);
 
   const {
     REDIRECT_TO,
-    SET_TOKEN,
-    TOKEN
+    SET_SNACK
   } = useContext(OtherContext);
 
   const [formData, setFormData] = useState({
-    email: 'ahumada1790@gmail.com',
-    password: 'password01',
+    email: '',
+    password: '',
   });
 
   const handleChange = (e) => {
@@ -44,6 +44,15 @@ function Login({ navigate }) {
     event.preventDefault();
 
     let response = await POST_USER(formData);
+
+    if(response.error) {
+      SET_SNACK({
+        value: true,
+        message: response.msg,
+        severity: 'error'
+    });
+    }
+
 
     if (response.ok) {
       SET_TOKEN(response.token);
@@ -64,8 +73,9 @@ function Login({ navigate }) {
             <Typography gutterBottom variant="h5" component="div">
               CLUSTER
             </Typography>
-            <TextField id="email" name="email" label="Correo Eletrónico" variant="standard" onChange={handleChange} value={formData.email} />
-            <TextField id="password" name="password" label="Contraseña" type="password" variant="standard" onChange={handleChange} value={formData.password} />
+            <TextField id="email" name="email" label="Correo Eletrónico" variant="standard" onChange={handleChange} value={formData.email} sx={{width: '300px', margin:2}}/>
+            <br />
+            <TextField id="password" name="password" label="Contraseña" type="password" variant="standard" onChange={handleChange} value={formData.password} sx={{width: '300px', margin:2}} />
           </CardContent>
           <CardActions sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Button type="submit" onClick={handleSubmit} variant="contained">Iniciar Sesión</Button>

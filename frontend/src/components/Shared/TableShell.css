@@ -1,4 +1,11 @@
-.table-cell-modifier {
+td.table-cell-modifier {
     margin: 0;
-    line-height: 0;
+    padding: 9px;
+}
+
+.table-cell-modifier.right {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

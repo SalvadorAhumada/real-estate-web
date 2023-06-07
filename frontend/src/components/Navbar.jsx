@@ -13,14 +13,18 @@ import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
 import PersonIcon from '@mui/icons-material/Person';
 import { OtherContext } from "../Context/OtherContext";
+import { UserContext } from "../Context/UserContext";
 
 function Navbar({ navigate }) {
 
     const {
-        LOG_OUT,
-        TOKEN,
         REDIRECT_TO
     } = useContext(OtherContext);
+
+    const {
+        LOG_OUT,
+        TOKEN,
+    } = useContext(UserContext);
 
     function showOptions() {
         if (TOKEN) return ["Inicio", "Usuarios", "Ejecutivos"]
