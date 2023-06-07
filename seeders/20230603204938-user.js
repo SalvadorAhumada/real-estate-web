@@ -24,7 +24,8 @@ module.exports = {
         }
 
         seed.push({
-          userName: getData(data),
+          name: getData(data),
+          lastname: getData(data),
           email: getData(data),
           password: bcrypt.hashSync(getData(data), salt),
           type: getData(data),

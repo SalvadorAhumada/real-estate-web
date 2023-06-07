@@ -6,8 +6,10 @@ require("dotenv").config();
 const USER = db.users;
 
 const MILISECONDS = 3600000;
-/*
-** api/users/authenticate
+/**
+ * Creates new user
+ * POST api/users/authenticate
+ * @param {cookie} string  
  */
 const authenticate = async (req, res) => {
 
@@ -31,8 +33,12 @@ const authenticate = async (req, res) => {
 
   })
 }
-/*
-** api/user/signup
+/**
+ * Creates new user
+ * POST api/users/signup
+ * @param {email} string  
+ * @param {password} string
+ * @param {userName} string
  */
 const signup = async (req, res) => {
   try {
@@ -58,7 +64,12 @@ const signup = async (req, res) => {
     console.log(error);
   }
 };
-
+/**
+ * Logins user
+ * POST api/users/login
+ * @param {email} string  
+ * @param {password} string
+ */
 const login = async (req, res) => {
 
   try {
@@ -94,12 +105,33 @@ const login = async (req, res) => {
     console.log(error);
   }
 };
-
+/**
+ * Logout user
+ * POST api/users/logout
+ */
 const logout = async (_req, res) => {
 
   res.cookie('ar3djwt', '', { expiresIn: new Date(0) });
 
   return res.status(200).send({ jwt: false });
+}
+/**
+ * List of all users
+ * GET api/users/all_users
+ */
+const all_users = async(_req, res) => {
+
+  try {
+
+    const user = await USER.findAll({
+      attributes: { exclude: ['password'] }
+    });
+
+    res.status(200).send({ data: user });
+
+  } catch(ex) {
+    res.status(403).send({ jwt: false, msg: "Error" });
+  }
 }
 
 
@@ -107,5 +139,6 @@ module.exports = {
   signup,
   login,
   authenticate,
-  logout
+  logout,
+  all_users
 };

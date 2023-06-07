@@ -6,6 +6,12 @@ export const OtherContextProvider = ({ children }) => {
 
     const [CLUSTERS, SET_CLUSTERS] = useState([]);
 
+    const [POPUP_DATA, SET_POPUP_DATA] = useState({
+        title: '',
+        body: '',
+        type: ''
+    })
+
     const [SNACK, SET_SNACK] = useState({
         value: null,
         message: '',
@@ -56,7 +62,9 @@ export const OtherContextProvider = ({ children }) => {
         GET_CLUSTERS_UNITS,
         REDIRECT_TO,
         SNACK,
-        SET_SNACK
+        SET_SNACK,
+        POPUP_DATA,
+        SET_POPUP_DATA
     }
 
     return <OtherContext.Provider value={otherContext}>

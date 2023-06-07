@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
   units.associate = function(models) {
     units.belongsTo(models.clusters)
     units.belongsTo(models.status)
+    units.belongsTo(models.users)
   }
   
   return units;

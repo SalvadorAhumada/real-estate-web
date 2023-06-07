@@ -63,7 +63,7 @@ export default function ListUnits({ data }) {
               <TableCell className="cell-modifier" component="th" scope="row">
                 <b>{FORMAT_CURRENCY(row.price)}</b>
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row" sx={{color: row.status.color_hex, background: row.status.id === 2 ? '#cbcbcb8f': '#cbcbcb1c'}}>
+              <TableCell className="cell-modifier" component="th" scope="row" sx={{color: row.status.color_hex, background: row.status.id === 2 ? '#cbcbcb8f': '#cbcbcb1c', textAlign: 'center'}}>
                 <b>{row.status.name}</b>
               </TableCell>
             </TableRow>

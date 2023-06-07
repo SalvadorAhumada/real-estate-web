@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import { UnitContext } from '../Context/UnitContext';
 import Grid from '@mui/material/Grid';
-import UnitDetail from './Detail/UnitDetail';
+import UnitDetail from './Detail/UnitDetail/UnitDetail';
 
 function UnitModal({ open, close }) {
 

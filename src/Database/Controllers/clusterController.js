@@ -4,7 +4,11 @@ const sequelize = db.sequelize;
 const UNITS = db.units;
 const CLUSTERS = db.clusters;
 const STATUS = db.status;
-/* api/clusters/count */
+const USERS = db.users;
+/**
+ * Statuses from all units in all clusters 
+ * GET api/clusters/count  
+ */
 const count = async (_req, res) => {
 
     try {
@@ -26,7 +30,11 @@ const count = async (_req, res) => {
         res.status(400).send({ msg: "Error!", err })
     }
 }
-/* api/clusters/:id */
+/**
+ * Specific ID cluster
+ * GET api/clusters/:id
+ * @param {clusterId} string  
+ */
 const cluster = async (req, res) => {
     
     const { clusterId } = req.params;
@@ -36,7 +44,7 @@ const cluster = async (req, res) => {
             where: {
                 clusterId: parseInt(clusterId)
             },
-            include: [CLUSTERS, STATUS],
+            include: [CLUSTERS, STATUS, USERS],
             order: [
                 ['id', 'ASC']
               ]
@@ -47,7 +55,10 @@ const cluster = async (req, res) => {
         return res.status(400).send({ msg: "Error!" })
     }
 }
-/* api/clusters */
+/**
+ * All clusters
+ * GET api/clusters
+ */
 const clusters = async(_req, res) => {
     try {
 

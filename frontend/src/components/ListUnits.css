@@ -1,10 +1,8 @@
 th.header-modifier {
     text-align: center;
     font-weight: bolder;
-}
-
-th.cell-modifier {
-    text-align: center;
+    text-align:center;
+    padding:10px;
 }
 
 th.css-1ygcj2i-MuiTableCell-root {

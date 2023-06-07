@@ -15,7 +15,9 @@ module.exports = {
         let count = 0;
 
         function getData(data) {
-          const row = data[count];
+          let row = data[count];
+
+          if(row === 'NULL') row = null;
           count++;
           return row;
         }
@@ -31,6 +33,7 @@ module.exports = {
           otherData : getData(data),
           clusterId: getData(data),
           statusId: getData(data),
+          userId: getData(data),
           createdAt: new Date(),
           updatedAt: new Date()
         })
