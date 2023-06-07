@@ -13,8 +13,9 @@ const all = async (_req, res) => {
     }
 }
 /**
- * api/units/status
- **/
+ * All statuses
+ * GET  api/units/status
+ */
 const status = async (_req, res) => {
 
     try {
@@ -42,9 +43,34 @@ const update_status = async (req, res) => {
         res.status(400).send({ msg: "Error!" })
     }
 }
+/**
+ * Update userId in selectedUnit
+ * GET api/units/update_users
+ * @param { userId } integer 
+ * @param { unitId } integer 
+ */
+const update_user = async (req, res) => {
+
+    const { userId, unitId } = req.body;
+
+    try {
+
+        const updatedUnit = await UNITS.update(
+            { userId },
+            { where: { id: unitId } }
+        )
+
+        res.status(200).send({ data: updatedUnit });
+
+    } catch (ex) {
+        res.status(400).send({ msg: "Error!" })
+    }
+
+}
 
 module.exports = {
     all,
     status,
-    update_status
+    update_status,
+    update_user
 };

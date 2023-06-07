@@ -15,12 +15,15 @@ import Popup from '../../Shared/Popup';
 import Button from '@mui/material/Button';
 import './UnitDetail.css';
 import UserSelect from './UserSelect';
+import { UserContext } from "../../../Context/UserContext";
 
 export default function UnitDetail({ statuses }) {
 
   const {
     SELECTED_UNIT,
     UPDATE_STATUS,
+    UPDATE_USER,
+    SET_SELECTED_UNIT
   } = useContext(UnitContext);
 
   const {
@@ -30,9 +33,16 @@ export default function UnitDetail({ statuses }) {
     SET_POPUP_DATA
   } = useContext(OtherContext);
 
+  const {
+    GET_EXECUTIVES,
+    EXECUTIVES
+  } = useContext(UserContext);
+
   const [status, setStatus] = useState('');
 
   const [open, setOpen] = useState(false);
+
+  const [openUser, setOpenUser] = useState(false);
 
   const available_status = statuses.map(({ name, id }) => {
     return { name, id }
@@ -40,28 +50,32 @@ export default function UnitDetail({ statuses }) {
 
   useEffect(() => {
     setStatus(SELECTED_UNIT.status.name)
+    GET_EXECUTIVES();
   }, [])
 
   const unit = SELECTED_UNIT;
-  
+
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
     SET_POPUP_DATA({
       title: '¿Actualizar estado?',
-      body: `${unit.name} cambiara su estado a ${status}.`,
+      body: `${unit.name} cambiara su estado a ${event.target.value}.`,
       type: 'status'
     })
     setOpen(true);
   };
 
   const handleChangeExecutive = () => {
-    if(unit.user) {
+
+    if (unit.user) {
       SET_POPUP_DATA({
         title: '¿Eliminar a este ejecutivo?',
         body: `${unit.user.name} ${unit.user.lastname} sera desvinculado/a de esta unidad. ¿Desea continuar?`,
         type: 'user'
       })
       setOpen(true);
+    } else {
+      setOpenUser(true);
     }
 
   }
@@ -90,7 +104,7 @@ export default function UnitDetail({ statuses }) {
 
   const updateStatus = () => {
     const selectedStatus = available_status.find(s => s.name === status);
-    UPDATE_STATUS({ unitId: SELECTED_UNIT.id, statusId: selectedStatus.id }).then(res => {
+    UPDATE_STATUS({ unitId: SELECTED_UNIT.id, statusId: selectedStatus.id }).then(() => {
       setOpen(false)
       SET_SNACK({
         value: true,
@@ -103,23 +117,44 @@ export default function UnitDetail({ statuses }) {
     })
   }
 
+  const removeUser = () => {
+    const data = { userId: null, unitId: unit.id, clusterId: unit.cluster.id };
+    UPDATE_USER(data).then(
+      () => {
+        SET_SNACK({
+            value: true,
+            message: 'Unidad actualizada con éxito',
+            severity: 'success'
+        });
+        setOpen(false);
+        GET_CLUSTERS_UNITS(data.clusterId).then(({ units }) => {
+            const updatedUnit = units.find(u => u.id === unit.id)
+            SET_SELECTED_UNIT(updatedUnit);
+        })
+    }
+    )
+    .catch( ex => {
+      console.log(ex)
+    })
+  }
+
   const onAccept = () => {
-    switch(POPUP_DATA.type) {
+    switch (POPUP_DATA.type) {
       case 'status':
         updateStatus();
         break;
       case 'user':
-        console.log("open users modal")
+        removeUser();
         break;
     }
   }
 
   const hasUser = () => {
 
-    let text = 'Asignar Ejecutivo', variant='contained',title='Asignar Ejecutivo'
+    let text = 'Asignar Ejecutivo', variant = 'contained', title = 'Asignar Ejecutivo'
 
-    if(unit.user) {
-      text = title =`${unit.user.name} ${unit.user.lastname}`;
+    if (unit.user) {
+      text = title = `${unit.user.name} ${unit.user.lastname}`;
       variant = 'outlined';
     }
 
@@ -131,7 +166,7 @@ export default function UnitDetail({ statuses }) {
   return (
     <div className="unit-wrapper">
       <Popup open={open} setOpen={setOpen} onCancel={onCancel} onAccept={onAccept} popupTitle={POPUP_DATA.title} popupBody={POPUP_DATA.body} />
-      <UserSelect />
+      <UserSelect unit={unit} open={openUser} setOpen={setOpenUser} executives={EXECUTIVES} />
       <TableContainer component={Paper}>
         <Typography gutterBottom variant="h5" component="div" sx={{ textAlign: 'center', margin: 1 }}>
           <b>UNIDAD {unit.name}</b>

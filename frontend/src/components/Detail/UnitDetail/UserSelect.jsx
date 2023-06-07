@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -16,7 +16,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Person4Icon from '@mui/icons-material/Person4';
-import { UserContext } from "../../../Context/UserContext";
+import { UnitContext } from "../../../Context/UnitContext";
+import { OtherContext } from "../../../Context/OtherContext";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -57,18 +58,16 @@ BootstrapDialogTitle.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs() {
+export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
+    const {
+        SET_SNACK,
+        GET_CLUSTERS_UNITS
+    } = useContext(OtherContext);
 
     const {
-        GET_EXECUTIVES,
-        EXECUTIVES
-    } = useContext(UserContext);
-
-    useEffect(() => {
-        GET_EXECUTIVES();
-    }, []);
-
-    const [open, setOpen] = useState(false);
+        UPDATE_USER,
+        SET_SELECTED_UNIT
+    } = useContext(UnitContext);
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
@@ -76,16 +75,34 @@ export default function CustomizedDialogs() {
         setSelectedIndex(index);
     };
 
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
+    const handleUserAssign = () => {
+        const data = { userId: executives[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id };
+        UPDATE_USER(data).then(
+            () => {
+                SET_SNACK({
+                    value: true,
+                    message: 'Unidad actualizada con éxito',
+                    severity: 'success'
+                });
+                setOpen(false);
+                console.log('getting...')
+                GET_CLUSTERS_UNITS(data.clusterId).then(({ units }) => {
+                    const updatedUnit = units.find(u => u.id === unit.id)
+                    SET_SELECTED_UNIT(updatedUnit);
+                })
+            }
+        ).catch(ex => {
+            console.log(ex)
+        })
+    }
+
     const handleClose = () => {
         setOpen(false);
     };
     const executivesExist = () => {
 
-        if (EXECUTIVES && EXECUTIVES.length !== 0) {
-            return EXECUTIVES.map((executive, index) => {
+        if (executives && executives.length !== 0) {
+            return executives.map((executive, index) => {
                 return <ListItemButton
                     key={index}
                     selected={selectedIndex === index}
@@ -105,9 +122,6 @@ export default function CustomizedDialogs() {
 
     return (
         <div>
-            <Button variant="outlined" onClick={handleClickOpen}>
-                Seleccionar un ejecutivo
-            </Button>
             <BootstrapDialog
                 onClose={handleClose}
                 aria-labelledby="customized-dialog-title"
@@ -130,7 +144,7 @@ export default function CustomizedDialogs() {
                     </Box>
                 </DialogActions>
                 <DialogActions>
-                    <Button autoFocus onClick={handleClose}>
+                    <Button autoFocus onClick={handleUserAssign}>
                         ASIGNAR
                     </Button>
                 </DialogActions>

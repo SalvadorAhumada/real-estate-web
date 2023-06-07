@@ -2,6 +2,17 @@ import { createContext, useState } from 'react';
 
 export const UserContext = createContext({});
 
+const headers = {
+    'Content-Type': 'application/json',
+};
+
+const credentials = 'include';
+
+const methods = {
+    POST: 'POST',
+    GET: 'GET'
+}
+
 export const UserContextProvider = ({ children }) => {
 
     const [TOKEN, SET_TOKEN] = useState(null);
@@ -11,11 +22,9 @@ export const UserContextProvider = ({ children }) => {
     const POST_USER = async (data) => {
 
         let response = await fetch('http://localhost:3030/api/users/login', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.POST,
+            credentials,
+            headers,
             body: JSON.stringify(data)
         });
 
@@ -27,11 +36,9 @@ export const UserContextProvider = ({ children }) => {
 
     const AUTHENTICATE_USER = async () => {
         let auth = await fetch('http://localhost:3030/api/users/authenticate', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.POST,
+            credentials,
+            headers
         });
         auth = await auth.json();
         SET_TOKEN(auth.jwt);
@@ -40,11 +47,9 @@ export const UserContextProvider = ({ children }) => {
 
     const LOG_OUT = async () => {
         let auth = await fetch('http://localhost:3030/api/users/logout', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.POST,
+            credentials,
+            headers
         });
         auth = await auth.json();
         SET_TOKEN(false);
@@ -53,11 +58,9 @@ export const UserContextProvider = ({ children }) => {
 
     const GET_EXECUTIVES = async () => {
         let executives = await fetch('http://localhost:3030/api/users/all_users', {
-            method: 'GET',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.GET,
+            credentials,
+            headers
         });
         executives = await executives.json();
         SET_EXECUTIVES(executives.data);

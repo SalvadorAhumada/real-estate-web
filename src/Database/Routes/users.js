@@ -21,6 +21,6 @@ router.post('/logout', logout);
 
 router.post('/authenticate', authenticate);
 
-router.get('/all_users', userAuth.authenticateUser, all_users)
+router.get('/all_users', userAuth.authenticateUser, all_users);
 
 module.exports = router

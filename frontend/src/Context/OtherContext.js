@@ -20,9 +20,7 @@ export const OtherContextProvider = ({ children }) => {
 
     const [CLUSTER_UNITS, SET_CLUSTER_UNITS] = useState([]);
 
-    const FORMAT_CURRENCY = (amount) => {
-        return new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
-    }
+    const FORMAT_CURRENCY = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
     const GET_CLUSTERS_UNITS = async (clusterId) => {
         let units = await fetch(`http://localhost:3030/api/clusters/${clusterId}`, {
