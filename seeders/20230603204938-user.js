@@ -3,6 +3,7 @@
 const fs = require('fs');
 const csv = require('fast-csv');
 const csvFile = __dirname + '/csv/users.csv';
+const { getData } = require('./helpers/helpers');
 
 /** @type {import('sequelize-cli').Migration} */
 
@@ -15,20 +16,12 @@ module.exports = {
     const element = new Promise(async (resolve, _reject) => {
       let seed = [];
       fs.createReadStream(csvFile).pipe(csv()).on('data', function (data) {
-        let count = 0;
-
-        function getData(data) {
-          const row = data[count];
-          count++;
-          return row;
-        }
-
         seed.push({
-          name: getData(data),
-          lastname: getData(data),
-          email: getData(data),
-          password: bcrypt.hashSync(getData(data), salt),
-          type: getData(data),
+          name: getData(data, 0),
+          lastname: getData(data, 1),
+          email: getData(data, 2),
+          password: bcrypt.hashSync(getData(data, 3), salt),
+          type: getData(data, 4),
           createdAt: new Date(),
           updatedAt: new Date()
         })

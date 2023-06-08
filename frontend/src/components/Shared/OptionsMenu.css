@@ -1,0 +1,16 @@
+@media print
+{    
+    * {
+        overflow: visible !important;
+    }
+    body {
+        visibility: hidden;
+      }
+      #main-table {
+        visibility: visible;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    
+}

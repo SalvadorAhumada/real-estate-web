@@ -6,15 +6,15 @@ import {
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PrivateRoutes from "./Utils/ProtectedRoutes";
-import Login from "./Components/Login";
-import Main from "./Components/Main";
-import Users from "./Components/Users";
-import NotFound from "./Components/Shared/NotFound";
-import DetailList from './Components/DetailList';
-import Navbar from "./Components/Navbar";
+import Login from "./components/Login";
+import Main from "./components/Main";
+import Users from "./components/Users";
+import NotFound from "./components/Shared/NotFound";
+import DetailList from './components/DetailList';
+import Navbar from "./components/Navbar";
 import './App.css';
 import { UserContext } from "./Context/UserContext";
-import Snack from './Components/Shared/Snack';
+import Snack from './components/Shared/Snack';
 
 function App() {
 

@@ -52,6 +52,8 @@ function Navbar({ navigate }) {
             case 'Inicio':
                 REDIRECT_TO('/main', navigate);
             break;
+            default:
+                return null;
         }
         setAnchorElNav(null);
     };

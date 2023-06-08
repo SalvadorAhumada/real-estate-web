@@ -30,7 +30,7 @@ export default function ListUnits({ data }) {
 
   return (
     <TableContainer sx={{ width: '70%', maxWidth: 1200, margin: '0 auto', cursor: 'pointer' }} component={Paper}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <Table id="main-table" sx={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
             <TableCell className="header-modifier">UNIDAD</TableCell>

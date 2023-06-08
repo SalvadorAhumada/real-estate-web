@@ -3,6 +3,8 @@ import { OtherContext } from "../Context/OtherContext";
 import { useParams } from "react-router-dom";
 import ListUnits from './ListUnits';
 import Typography from '@mui/material/Typography';
+import OptionsMenu from './Shared/OptionsMenu';
+import './DetailList.css';
 
 function DetailList() {
 
@@ -32,9 +34,12 @@ function DetailList() {
 
   return (
     <div className="detail-list">
-      <Typography gutterBottom variant="h1" component="div">
-        {name}
-      </Typography>
+      <section className="config-wrapper">
+        <Typography gutterBottom variant="h1" component="div">
+          {name}
+        </Typography>
+        <OptionsMenu cluster={CLUSTER_UNITS[0].cluster.name}/>
+      </section>
       <ListUnits data={CLUSTER_UNITS} />
     </div>
   );

@@ -3,6 +3,7 @@
 const fs = require('fs');
 const csv = require('fast-csv');
 const csvFile = __dirname + '/csv/units.csv';
+const { getData } = require('./helpers/helpers');
 
 /** @type {import('sequelize-cli').Migration} */
 
@@ -12,28 +13,18 @@ module.exports = {
     const element = new Promise(async (resolve, _reject) => {
       let seed = [];
       fs.createReadStream(csvFile).pipe(csv()).on('data', function (data) {
-        let count = 0;
-
-        function getData(data) {
-          let row = data[count];
-
-          if(row === 'NULL') row = null;
-          count++;
-          return row;
-        }
-
         seed.push({
-          name: getData(data),
-          level: getData(data),
-          discount: getData(data),
-          bedrooms: getData(data),
-          bathrooms: getData(data),
-          m2total: getData(data),
-          price: getData(data),
-          otherData : getData(data),
-          clusterId: getData(data),
-          statusId: getData(data),
-          userId: getData(data),
+          name: getData(data, 0),
+          level: getData(data, 1),
+          discount: getData(data, 2),
+          bedrooms: getData(data, 3),
+          bathrooms: getData(data, 4),
+          m2total: getData(data, 5),
+          price: getData(data, 6),
+          otherData : getData(data, 7),
+          clusterId: getData(data, 8),
+          statusId: getData(data, 9),
+          userId: getData(data, 10),
           createdAt: new Date(),
           updatedAt: new Date()
         })

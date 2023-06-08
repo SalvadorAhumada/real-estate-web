@@ -4,8 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "droptable": "node app.js true",
     "start": "node app.js",
-    "dev": "concurrently \"npm run start\" \"cd frontend && npm start\""
+    "dev": "concurrently \"npm run start\" \"cd frontend && npm start\"",
+    "sequelize": "sequelize db:seed:all",
+    "install project":"npm i && cd frontend && npm i"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +25,8 @@
     "pg-hstore": "^2.3.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "sequelize": "^6.32.0"
+    "sequelize": "^6.32.0",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.19.3/xlsx-0.19.3.tgz"
   },
   "devDependencies": {
     "concurrently": "^8.1.0"

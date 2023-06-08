@@ -22,6 +22,8 @@ export const OtherContextProvider = ({ children }) => {
 
     const FORMAT_CURRENCY = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
+    const CURRENT_DATE = new Date().toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
+
     const GET_CLUSTERS_UNITS = async (clusterId) => {
         let units = await fetch(`http://localhost:3030/api/clusters/${clusterId}`, {
             method: 'GET',
@@ -62,7 +64,8 @@ export const OtherContextProvider = ({ children }) => {
         SNACK,
         SET_SNACK,
         POPUP_DATA,
-        SET_POPUP_DATA
+        SET_POPUP_DATA,
+        CURRENT_DATE
     }
 
     return <OtherContext.Provider value={otherContext}>

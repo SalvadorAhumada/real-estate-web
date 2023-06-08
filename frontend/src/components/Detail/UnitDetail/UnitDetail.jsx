@@ -151,10 +151,23 @@ export default function UnitDetail({ statuses }) {
 
   const hasUser = () => {
 
-    let text = 'Asignar Ejecutivo', variant = 'contained', title = 'Asignar Ejecutivo'
+    let text = 'Sin Ejecutivo', variant = 'contained', title = 'Asignar Ejecutivo'
 
     if (unit.user) {
       text = title = `${unit.user.name} ${unit.user.lastname}`;
+      variant = 'outlined';
+    }
+
+    return <Button onClick={handleChangeExecutive} variant={variant} size="small" title={title}>
+      {text}
+    </Button>
+  }
+
+  const hasCustomer = () => {
+    let text = 'Sin Cliente', variant = 'contained', title = 'Asignar Cliente'
+
+    if (unit.user) {
+      text = title = `${unit.customer.name} ${unit.customer.lastname}`;
       variant = 'outlined';
     }
 
@@ -214,6 +227,14 @@ export default function UnitDetail({ statuses }) {
               </TableCell>
               <TableCell component="th" scope="row">
                 {hasUser()}
+              </TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell component="th" scope="row">
+                <b>CLIENTE</b>
+              </TableCell>
+              <TableCell component="th" scope="row">
+                {hasCustomer()}
               </TableCell>
             </TableRow>
           </TableBody>

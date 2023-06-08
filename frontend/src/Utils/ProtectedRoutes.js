@@ -1,5 +1,5 @@
 import { Outlet, Navigate } from 'react-router-dom';
-import Loading from "../Components/Shared/Loading";
+import Loading from "../components/Shared/Loading";
 import { useContext } from "react";
 import { UserContext } from '../Context/UserContext';
 

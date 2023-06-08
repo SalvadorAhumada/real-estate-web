@@ -15,23 +15,29 @@ const authenticate = async (req, res) => {
 
   let cookies = req.headers['cookie'];
 
-  cookies = cookies.split(";");
+  try {
 
-  cookies.forEach(cookie => {
+    cookies = cookies.split(";");
 
-    if (cookie.includes("ar3djwt")) {
+    cookies.forEach(cookie => {
 
-      let value = cookie.split("=")[1];
-      if (value) {
-        return res.status(200).send({
-          jwt: value
-        })
-      } else {
-        return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+      if (cookie.includes("ar3djwt")) {
+
+        let value = cookie.split("=")[1];
+        if (value) {
+          return res.status(200).send({
+            jwt: value
+          })
+        } else {
+          return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+        }
       }
-    }
 
-  })
+    })
+  } catch (ex) {
+    return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+  }
+
 }
 /**
  * Creates new user
@@ -119,7 +125,7 @@ const logout = async (_req, res) => {
  * List of all users
  * GET api/users/all_users
  */
-const all_users = async(_req, res) => {
+const all_users = async (_req, res) => {
 
   try {
 
@@ -129,7 +135,7 @@ const all_users = async(_req, res) => {
 
     res.status(200).send({ data: user });
 
-  } catch(ex) {
+  } catch (ex) {
     res.status(403).send({ jwt: false, msg: "Error" });
   }
 }
