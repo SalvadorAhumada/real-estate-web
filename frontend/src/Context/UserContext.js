@@ -19,6 +19,8 @@ export const UserContextProvider = ({ children }) => {
 
     const [EXECUTIVES, SET_EXECUTIVES] = useState([]);
 
+    const [USERS, SET_USERS] = useState([]);
+
     const POST_USER = async (data) => {
 
         let response = await fetch('http://localhost:3030/api/users/login', {
@@ -57,14 +59,25 @@ export const UserContextProvider = ({ children }) => {
     }
 
     const GET_EXECUTIVES = async () => {
-        let executives = await fetch('http://localhost:3030/api/users/all_users', {
+        let executives = await fetch('http://localhost:3030/api/users/', {
             method: methods.GET,
             credentials,
             headers
         });
         executives = await executives.json();
-        SET_EXECUTIVES(executives.data);
+        SET_EXECUTIVES(executives);
         return executives;
+    }
+
+    const GET_USERS = async () => {
+        let customers = await fetch('http://localhost:3030/api/customers/', {
+            method: methods.GET,
+            credentials,
+            headers
+        });
+        customers = await customers.json();
+        SET_USERS(customers);
+        return customers;
     }
 
     const userContext = {
@@ -74,7 +87,9 @@ export const UserContextProvider = ({ children }) => {
         SET_TOKEN,
         TOKEN,
         GET_EXECUTIVES,
-        EXECUTIVES
+        EXECUTIVES,
+        GET_USERS,
+        USERS
     }
 
     return <UserContext.Provider value={userContext}>

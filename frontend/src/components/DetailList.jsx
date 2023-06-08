@@ -38,7 +38,7 @@ function DetailList() {
         <Typography gutterBottom variant="h1" component="div">
           {name}
         </Typography>
-        <OptionsMenu cluster={CLUSTER_UNITS[0].cluster.name}/>
+        <OptionsMenu cluster={name}/>
       </section>
       <ListUnits data={CLUSTER_UNITS} />
     </div>

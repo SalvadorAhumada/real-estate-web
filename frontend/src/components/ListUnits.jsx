@@ -48,22 +48,22 @@ export default function ListUnits({ data }) {
               key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 }, ':hover': { background: '#0000002b' } }}
             >
-              <TableCell className="cell-modifier" component="th" scope="row">
+              <TableCell className="cell-modifier-units-list" component="th" scope="row">
                 <b>{row.name}</b>
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row">
+              <TableCell className="cell-modifier-units-list" component="th" scope="row">
                 {row.level}
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row">
+              <TableCell className="cell-modifier-units-list" component="th" scope="row">
                 {row.bedrooms}
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row">
+              <TableCell className="cell-modifier-units-list" component="th" scope="row">
                 {row.bathrooms}
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row">
+              <TableCell className="cell-modifier-units-list" component="th" scope="row">
                 <b>{FORMAT_CURRENCY(row.price)}</b>
               </TableCell>
-              <TableCell className="cell-modifier" component="th" scope="row" sx={{color: row.status.color_hex, background: row.status.id === 2 ? '#cbcbcb8f': '#cbcbcb1c', textAlign: 'center'}}>
+              <TableCell className="cell-modifier-units-list" component="th" scope="row" sx={{color: row.status.color_hex, background: row.status.id === 2 ? '#cbcbcb8f': '#cbcbcb1c' }}>
                 <b>{row.status.name}</b>
               </TableCell>
             </TableRow>

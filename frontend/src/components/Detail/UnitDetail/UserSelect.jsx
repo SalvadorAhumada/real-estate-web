@@ -18,6 +18,7 @@ import Divider from '@mui/material/Divider';
 import Person4Icon from '@mui/icons-material/Person4';
 import { UnitContext } from "../../../Context/UnitContext";
 import { OtherContext } from "../../../Context/OtherContext";
+import './UserSelect.css';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -58,7 +59,13 @@ BootstrapDialogTitle.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
+export default function CustomizedDialogs({ open, setOpen, executives, customers, unit, type }) {
+
+    const text = {
+        title: type === 'customer' ? 'Clientes' : 'Ejecutivos',
+        body: type === 'customer' ? 'Asignar un cliente a esta unidad.' : 'Asignar un ejecutivo encargado de esta unidad.',
+    }
+
     const {
         SET_SNACK,
         GET_CLUSTERS_UNITS
@@ -66,7 +73,8 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
 
     const {
         UPDATE_USER,
-        SET_SELECTED_UNIT
+        SET_SELECTED_UNIT,
+        UPDATE_CUSTOMER
     } = useContext(UnitContext);
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -76,8 +84,12 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
     };
 
     const handleUserAssign = () => {
-        const data = { userId: executives[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id };
-        UPDATE_USER(data).then(
+        const callback = type === 'customer' ? UPDATE_CUSTOMER : UPDATE_USER
+        const data = type === 'customer' ?
+            { customerId: customers[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id } :
+            { userId: executives[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id }
+
+        callback(data).then(
             () => {
                 SET_SNACK({
                     value: true,
@@ -85,8 +97,7 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
                     severity: 'success'
                 });
                 setOpen(false);
-                console.log('getting...')
-                GET_CLUSTERS_UNITS(data.clusterId).then(({ units }) => {
+                GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
                     const updatedUnit = units.find(u => u.id === unit.id)
                     SET_SELECTED_UNIT(updatedUnit);
                 })
@@ -99,10 +110,11 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
     const handleClose = () => {
         setOpen(false);
     };
-    const executivesExist = () => {
+    const usersExist = () => {
+        const users = type === 'customer' ? customers : executives
 
-        if (executives && executives.length !== 0) {
-            return executives.map((executive, index) => {
+        if (users && users.length !== 0) {
+            return users.map((user, index) => {
                 return <ListItemButton
                     key={index}
                     selected={selectedIndex === index}
@@ -111,7 +123,7 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
                     <ListItemIcon>
                         <Person4Icon />
                     </ListItemIcon>
-                    <ListItemText primary={`${executive.name} ${executive.lastname}`} />
+                    <ListItemText primary={`${user.name} ${user.lastname}`} />
                 </ListItemButton>
             })
 
@@ -128,17 +140,17 @@ export default function CustomizedDialogs({ open, setOpen, executives, unit }) {
                 open={open}
             >
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
-                    Ejecutivos
+                    {text.title}
                 </BootstrapDialogTitle>
                 <DialogContent dividers>
                     <Typography gutterBottom>
-                        Asignar un ejecutivo encargado de esta unidad.
+                        {text.body}
                     </Typography>
                 </DialogContent>
-                <DialogActions>
+                <DialogActions className='users-wrapper'>
                     <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
                         <List component="nav" aria-label="unit executives">
-                            {executivesExist()}
+                            {usersExist()}
                         </List>
                         <Divider />
                     </Box>

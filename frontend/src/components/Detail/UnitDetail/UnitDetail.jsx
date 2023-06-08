@@ -15,15 +15,15 @@ import Popup from '../../Shared/Popup';
 import Button from '@mui/material/Button';
 import './UnitDetail.css';
 import UserSelect from './UserSelect';
-import { UserContext } from "../../../Context/UserContext";
 
-export default function UnitDetail({ statuses }) {
+export default function UnitDetail({ statuses, executives, customers }) {
 
   const {
     SELECTED_UNIT,
     UPDATE_STATUS,
     UPDATE_USER,
-    SET_SELECTED_UNIT
+    SET_SELECTED_UNIT,
+    UPDATE_CUSTOMER
   } = useContext(UnitContext);
 
   const {
@@ -33,16 +33,13 @@ export default function UnitDetail({ statuses }) {
     SET_POPUP_DATA
   } = useContext(OtherContext);
 
-  const {
-    GET_EXECUTIVES,
-    EXECUTIVES
-  } = useContext(UserContext);
-
   const [status, setStatus] = useState('');
 
   const [open, setOpen] = useState(false);
 
   const [openUser, setOpenUser] = useState(false);
+
+  const [type, setType] = useState('');
 
   const available_status = statuses.map(({ name, id }) => {
     return { name, id }
@@ -50,15 +47,14 @@ export default function UnitDetail({ statuses }) {
 
   useEffect(() => {
     setStatus(SELECTED_UNIT.status.name)
-    GET_EXECUTIVES();
   }, [])
-
+  
   const unit = SELECTED_UNIT;
 
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
     SET_POPUP_DATA({
-      title: '¿Actualizar estado?',
+      title: '¿Actualizar estado?', 
       body: `${unit.name} cambiara su estado a ${event.target.value}.`,
       type: 'status'
     })
@@ -75,9 +71,24 @@ export default function UnitDetail({ statuses }) {
       })
       setOpen(true);
     } else {
+      setType('user');
       setOpenUser(true);
     }
 
+  }
+
+  const handleChangeCustomer = () => {
+    if (unit.customer) {
+      SET_POPUP_DATA({
+        title: '¿Eliminar a este cliente?',
+        body: `${unit.customer.name} ${unit.customer.lastname} sera desvinculado/a de esta unidad. ¿Desea continuar?`,
+        type: 'customer'
+      })
+      setOpen(true);
+    } else {
+      setType('customer');
+      setOpenUser(true);
+    }
   }
 
   const formatBody = () => {
@@ -127,8 +138,29 @@ export default function UnitDetail({ statuses }) {
             severity: 'success'
         });
         setOpen(false);
-        GET_CLUSTERS_UNITS(data.clusterId).then(({ units }) => {
-            const updatedUnit = units.find(u => u.id === unit.id)
+        GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
+            const updatedUnit = units.find(u => u.id === unit.id);
+            SET_SELECTED_UNIT(updatedUnit);
+        })
+    }
+    )
+    .catch( ex => {
+      console.log(ex)
+    })
+  }
+
+  const removeCustomer = () => {
+    const data = { customerId: null, unitId: unit.id, clusterId: unit.cluster.id };
+    UPDATE_CUSTOMER(data).then(
+      () => {
+        SET_SNACK({
+            value: true,
+            message: 'Unidad actualizada con éxito',
+            severity: 'success'
+        });
+        setOpen(false);
+        GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
+            const updatedUnit = units.find(u => u.id === unit.id);
             SET_SELECTED_UNIT(updatedUnit);
         })
     }
@@ -146,6 +178,8 @@ export default function UnitDetail({ statuses }) {
       case 'user':
         removeUser();
         break;
+      case 'customer':
+        removeCustomer();
     }
   }
 
@@ -166,12 +200,12 @@ export default function UnitDetail({ statuses }) {
   const hasCustomer = () => {
     let text = 'Sin Cliente', variant = 'contained', title = 'Asignar Cliente'
 
-    if (unit.user) {
+    if (unit.customer) {
       text = title = `${unit.customer.name} ${unit.customer.lastname}`;
       variant = 'outlined';
     }
 
-    return <Button onClick={handleChangeExecutive} variant={variant} size="small" title={title}>
+    return <Button onClick={handleChangeCustomer} variant={variant} size="small" title={title}>
       {text}
     </Button>
   }
@@ -179,7 +213,7 @@ export default function UnitDetail({ statuses }) {
   return (
     <div className="unit-wrapper">
       <Popup open={open} setOpen={setOpen} onCancel={onCancel} onAccept={onAccept} popupTitle={POPUP_DATA.title} popupBody={POPUP_DATA.body} />
-      <UserSelect unit={unit} open={openUser} setOpen={setOpenUser} executives={EXECUTIVES} />
+      <UserSelect unit={unit} open={openUser} setOpen={setOpenUser} executives={executives} customers={customers} type={type} />
       <TableContainer component={Paper}>
         <Typography gutterBottom variant="h5" component="div" sx={{ textAlign: 'center', margin: 1 }}>
           <b>UNIDAD {unit.name}</b>

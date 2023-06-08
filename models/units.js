@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     units.belongsTo(models.clusters)
     units.belongsTo(models.status)
     units.belongsTo(models.users)
+    units.belongsTo(models.customers)
   }
   
   return units;

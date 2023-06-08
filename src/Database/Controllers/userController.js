@@ -123,9 +123,9 @@ const logout = async (_req, res) => {
 }
 /**
  * List of all users
- * GET api/users/all_users
+ * GET api/users/
  */
-const all_users = async (_req, res) => {
+const users = async (_req, res) => {
 
   try {
 
@@ -133,7 +133,7 @@ const all_users = async (_req, res) => {
       attributes: { exclude: ['password'] }
     });
 
-    res.status(200).send({ data: user });
+    res.status(200).send(user);
 
   } catch (ex) {
     res.status(403).send({ jwt: false, msg: "Error" });
@@ -146,5 +146,5 @@ module.exports = {
   login,
   authenticate,
   logout,
-  all_users
+  users
 };

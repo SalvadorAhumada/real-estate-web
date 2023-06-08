@@ -63,6 +63,19 @@ export const UnitContextProvider = ({ children }) => {
         return updatedUser;
     }
 
+    const UPDATE_CUSTOMER = async (data) => {
+        let updatedCustomer = await fetch('http://localhost:3030/api/units/update_customer', {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        });
+        updatedCustomer = await updatedCustomer.json();
+        return updatedCustomer;
+    }
+
     const userContext = {
         GET_AVAILABLE_STATUS,
         GET_COUNT,
@@ -71,7 +84,8 @@ export const UnitContextProvider = ({ children }) => {
         SELECTED_UNIT,
         AVAILABLE_STATUS,
         UPDATE_STATUS,
-        UPDATE_USER
+        UPDATE_USER,
+        UPDATE_CUSTOMER
     }
 
     return <UnitContext.Provider value={userContext}>

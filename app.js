@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser');
 const units = require('./src/Database/Routes/units');
 const users = require('./src/Database/Routes/users');
 const clusters = require('./src/Database/Routes/clusters');
+const customers = require('./src/Database/Routes/customers');
 const { shouldRestoreDB } = require('./src/Database/Utils/index');
 const dropTable = process.argv[2];
 
@@ -26,6 +27,7 @@ shouldRestoreDB(dropTable);
 app.use('/api/users', users);
 app.use('/api/units', units);
 app.use('/api/clusters', clusters);
+app.use('/api/customers', customers);
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

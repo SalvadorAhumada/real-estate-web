@@ -33,7 +33,7 @@ export const OtherContextProvider = ({ children }) => {
             },
         });
         units = await units.json();
-        SET_CLUSTER_UNITS(units.units);
+        SET_CLUSTER_UNITS(units);
         return units;
     }
 

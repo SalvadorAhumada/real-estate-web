@@ -8,3 +8,7 @@ th.header-modifier {
 th.css-1ygcj2i-MuiTableCell-root {
     font-weight: bolder;
 }
+
+th.cell-modifier-units-list {
+    text-align: center;
+}

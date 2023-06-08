@@ -68,9 +68,36 @@ const update_user = async (req, res) => {
 
 }
 
+/**
+ * Update userId in selectedUnit
+ * GET api/units/update_customers
+ * @param { userId } integer 
+ * @param { unitId } integer 
+ */
+const update_customer = async (req, res) => {
+
+    const { customerId, unitId } = req.body;
+    console.log(req.body); 
+
+    try {
+
+        const updatedUnit = await UNITS.update(
+            { customerId },
+            { where: { id: unitId } }
+        )
+
+        res.status(200).send({ data: updatedUnit });
+
+    } catch (ex) {
+        res.status(400).send({ msg: "Error!" })
+    }
+
+}
+
 module.exports = {
     all,
     status,
     update_status,
-    update_user
+    update_user,
+    update_customer
 };

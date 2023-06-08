@@ -25,6 +25,7 @@ module.exports = {
           clusterId: getData(data, 8),
           statusId: getData(data, 9),
           userId: getData(data, 10),
+          customerId: getData(data, 11),
           createdAt: new Date(),
           updatedAt: new Date()
         })

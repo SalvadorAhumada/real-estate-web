@@ -5,6 +5,7 @@ const UNITS = db.units;
 const CLUSTERS = db.clusters;
 const STATUS = db.status;
 const USERS = db.users;
+const CUSTOMERS = db.customers;
 /**
  * Statuses from all units in all clusters 
  * GET api/clusters/count  
@@ -44,12 +45,12 @@ const cluster = async (req, res) => {
             where: {
                 clusterId: parseInt(clusterId)
             },
-            include: [CLUSTERS, STATUS, USERS],
+            include: [CLUSTERS, STATUS, USERS, CUSTOMERS],
             order: [
                 ['id', 'ASC']
               ]
         });
-        return res.status(200).send({ units });
+        return res.status(200).send(units);
 
     } catch(ex) {
         return res.status(400).send({ msg: "Error!" })
