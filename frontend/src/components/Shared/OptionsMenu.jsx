@@ -9,12 +9,13 @@ import GridOnIcon from '@mui/icons-material/GridOn';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
 import XLSX from "xlsx";
+import AddIcon from '@mui/icons-material/Add';
 import './OptionsMenu.css';
 
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu({ cluster }) {
+export default function LongMenu({ cluster, type }) {
 
     const {
         CURRENT_DATE
@@ -43,13 +44,27 @@ export default function LongMenu({ cluster }) {
 
     }
 
-    const options = [
-        { name: 'Descargar PDF', callback: printDiv, icon: <PictureAsPdfIcon fontSize="small" /> },
-        { name: 'Descargar XLSX', callback: getSheet, icon: <GridOnIcon fontSize="small" /> }
-    ];
+    const showExecutiveModal = () => {
+        console.log("-------")
+    }
+
+    let options;
+    switch(type) {
+        case 'units':
+            options = [
+                { name: 'Descargar PDF', callback: printDiv, icon: <PictureAsPdfIcon fontSize="small" /> },
+                { name: 'Descargar XLSX', callback: getSheet, icon: <GridOnIcon fontSize="small" /> }
+            ];
+            break;
+        case 'users':
+            options = [
+                { name: 'Agregar Ejecutivo', callback: showExecutiveModal, icon: <AddIcon fontSize="small" /> }
+            ]
+        break;
+    }
 
     return (
-        <div>
+        <div className="config-menu">
             <IconButton
                 aria-label="more"
                 id="long-button"

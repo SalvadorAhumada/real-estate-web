@@ -8,13 +8,14 @@ import { useNavigate } from "react-router-dom";
 import PrivateRoutes from "./Utils/ProtectedRoutes";
 import Login from "./components/Login";
 import Main from "./components/Main";
-import Users from "./components/Users";
+import Users from "./components/Users/Users";
 import NotFound from "./components/Shared/NotFound";
 import DetailList from './components/DetailList';
 import Navbar from "./components/Navbar";
 import './App.css';
 import { UserContext } from "./Context/UserContext";
 import Snack from './components/Shared/Snack';
+import { OtherContext } from "./Context/OtherContext";
 
 function App() {
 
@@ -24,9 +25,21 @@ function App() {
     AUTHENTICATE_USER,
   } = useContext(UserContext);
 
+  const {
+    SET_SNACK
+  } = useContext(OtherContext);
+
   useEffect(() => {
-    AUTHENTICATE_USER();
-  });
+    AUTHENTICATE_USER().then((res) => {
+      if(!window.location.href.includes("login") && !res.jwt) {
+        SET_SNACK({
+          value: true,
+          message: 'Sesión caducada. Por favor inicie sesión nuevamente para continuar.',
+          severity: 'error'
+        })
+      }
+    })
+  }, []);
 
   return (
     <div className="App">

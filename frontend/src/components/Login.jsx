@@ -73,7 +73,7 @@ function Login({ navigate }) {
             <Typography gutterBottom variant="h5" component="div">
               CLUSTER
             </Typography>
-            <TextField id="email" name="email" label="Correo Eletrónico" variant="standard" onChange={handleChange} value={formData.email} sx={{width: '300px', margin:2}}/>
+            <TextField id="email" name="email" label="Correo Electrónico" variant="standard" onChange={handleChange} value={formData.email} sx={{width: '300px', margin:2}}/>
             <br />
             <TextField id="password" name="password" label="Contraseña" type="password" variant="standard" onChange={handleChange} value={formData.password} sx={{width: '300px', margin:2}} />
           </CardContent>

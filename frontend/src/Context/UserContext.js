@@ -10,7 +10,8 @@ const credentials = 'include';
 
 const methods = {
     POST: 'POST',
-    GET: 'GET'
+    GET: 'GET',
+    DELETE: 'DELETE'
 }
 
 export const UserContextProvider = ({ children }) => {
@@ -21,6 +22,8 @@ export const UserContextProvider = ({ children }) => {
 
     const [USERS, SET_USERS] = useState([]);
 
+    const [CURRENT_USER, SET_CURRENT_USER] = useState('');
+
     const POST_USER = async (data) => {
 
         let response = await fetch('http://localhost:3030/api/users/login', {
@@ -30,8 +33,8 @@ export const UserContextProvider = ({ children }) => {
             body: JSON.stringify(data)
         });
 
-        response = response.json();
-
+        response = await response.json();
+        SET_CURRENT_USER(response.user.name);
         return response;
 
     };
@@ -80,6 +83,30 @@ export const UserContextProvider = ({ children }) => {
         return customers;
     }
 
+    const UPDATE_USER = async (data) => {
+        let updatedUser = await fetch('http://localhost:3030/api/users/update', {
+            method: methods.POST,
+            credentials,
+            headers,
+            body: JSON.stringify(data)
+        });
+
+        updatedUser = await updatedUser.json();
+        return updatedUser;
+    }
+
+    const DELETE_EXECUTIVE = async (data) => {
+        let deletedExec = await fetch('http://localhost:3030/api/users/delete_user', {
+            method: methods.DELETE,
+            credentials,
+            headers,
+            body: JSON.stringify(data)
+        });
+
+        deletedExec = await deletedExec.json();
+        return deletedExec;
+    }
+
     const userContext = {
         AUTHENTICATE_USER,
         LOG_OUT,
@@ -89,7 +116,10 @@ export const UserContextProvider = ({ children }) => {
         GET_EXECUTIVES,
         EXECUTIVES,
         GET_USERS,
-        USERS
+        USERS,
+        UPDATE_USER,
+        DELETE_EXECUTIVE,
+        CURRENT_USER
     }
 
     return <UserContext.Provider value={userContext}>

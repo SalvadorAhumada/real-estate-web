@@ -13,29 +13,35 @@ const MILISECONDS = 3600000;
  */
 const authenticate = async (req, res) => {
 
+  const noAuth = { jwt: false, msg: "Not authenticated" }
+
   let cookies = req.headers['cookie'];
+
+  if (!cookies) return res.status(403).send(noAuth);
 
   try {
 
-    cookies = cookies.split(";");
+    cookies = cookies.split("; ");
 
-    cookies.forEach(cookie => {
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i];
 
       if (cookie.includes("ar3djwt")) {
 
         let value = cookie.split("=")[1];
+
         if (value) {
-          return res.status(200).send({
-            jwt: value
-          })
+
+          return res.status(200).send({ jwt: value })
+
         } else {
-          return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+          return res.status(403).send(noAuth);
         }
       }
-
-    })
+    }
+    return res.status(403).send(noAuth);
   } catch (ex) {
-    return res.status(403).send({ jwt: false, msg: "Not authenticated" });
+    return res.status(403).send(noAuth);
   }
 
 }
@@ -44,13 +50,11 @@ const authenticate = async (req, res) => {
  * POST api/users/signup
  * @param {email} string  
  * @param {password} string
- * @param {userName} string
  */
 const signup = async (req, res) => {
   try {
-    const { userName, email, password } = req.body;
+    const { email, password } = req.body;
     const data = {
-      userName,
       email,
       password: await bcrypt.hash(password, 10),
     };
@@ -81,12 +85,10 @@ const login = async (req, res) => {
   try {
 
     const { email, password } = req.body;
-
-    const user = await USER.findOne({
-      where: {
-        email: email
-      }
-
+    
+    let user = await USER.findOne({
+      where: { email: email },
+      raw: true
     });
 
     if (!user) return res.status(401).send({ error: true, msg: "Error con correo o contraseña" })
@@ -98,12 +100,16 @@ const login = async (req, res) => {
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: MILISECONDS
     });
+    delete user.password;
+    delete user.deletedAt;
 
     res.cookie("ar3djwt", token, { maxAge: MILISECONDS, httpOnly: true });
+    
     return res.status(201).send({
       message: "Login Successful",
       email,
       token,
+      user,
       ok: true
     });
 
@@ -130,7 +136,12 @@ const users = async (_req, res) => {
   try {
 
     const user = await USER.findAll({
-      attributes: { exclude: ['password'] }
+      attributes: {
+        exclude: ['password']
+      },
+      order: [
+        ['id', 'ASC']
+      ]
     });
 
     res.status(200).send(user);
@@ -139,6 +150,82 @@ const users = async (_req, res) => {
     res.status(403).send({ jwt: false, msg: "Error" });
   }
 }
+/**
+ * List of all users
+ * POST api/users/update
+ *  * @param {user} USER
+ */
+const update = async (req, res) => {
+
+  let updateUser = req.body;
+  const id = updateUser.id;
+  delete updateUser.id;
+  delete updateUser.createdAt;
+  delete updateUser.updatedAt;
+
+  let toUpdate = {}
+
+  try {
+
+    const existingUser = await USER.findOne({ where: { id } });
+
+    for (let key in updateUser) {
+      const updatedValue = updateUser[key];
+      const existingValue = existingUser[key];
+
+      if (updatedValue !== existingValue) {
+        toUpdate[key] = updatedValue;
+      }
+    }
+
+    const user = await USER.update(
+      { ...toUpdate },
+      { where: { id } }
+    )
+    res.status(200).send({ data: user });
+
+  } catch ({ name }) {
+
+    switch (name) {
+      case 'SequelizeUniqueConstraintError':
+        res.status(409).send({ errorCode:409, msg: 'Correo electrónico ya existe en base de datos' });
+      break;
+    }
+
+  }
+}
+/**
+ * List of all users
+ * POST api/users/update
+ *  * @param {userId} integer
+ *  * @param {currentUserId} integer
+ */
+const delete_user = async (req, res) => {
+
+  /*
+  TODO: No permitir que se elimine a si mismo 
+  */
+
+  console.log("-----------------------------")
+  console.log(req.user)
+  return res.status(200)
+
+  const { userId } = req.body
+
+  try {
+
+    const deletedUser = await USER.destroy({
+      where: { id: userId }
+    });
+
+    res.status(200).send({ data: deletedUser });
+
+  } catch (ex) {
+
+  }
+
+
+}
 
 
 module.exports = {
@@ -146,5 +233,7 @@ module.exports = {
   login,
   authenticate,
   logout,
-  users
+  users,
+  update,
+  delete_user
 };

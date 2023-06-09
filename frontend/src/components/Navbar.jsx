@@ -24,10 +24,10 @@ function Navbar({ navigate }) {
     const {
         LOG_OUT,
         TOKEN,
+        CURRENT_USER
     } = useContext(UserContext);
-
     function showOptions() {
-        if (TOKEN) return ["Inicio", "Usuarios", "Ejecutivos"]
+        if (TOKEN) return ["Inicio", "Ejecutivos", "Clientes"]
         return [];
     }
 
@@ -48,10 +48,12 @@ function Navbar({ navigate }) {
     };
 
     const handleCloseNavMenu = (page) => {
-        switch(page) {
+        switch (page) {
             case 'Inicio':
                 REDIRECT_TO('/main', navigate);
-            break;
+                break;
+            case 'Ejecutivos':
+                REDIRECT_TO('/users', navigate);
             default:
                 return null;
         }
@@ -152,7 +154,10 @@ function Navbar({ navigate }) {
                         ))}
                     </Box>
 
-                    {TOKEN && <Box sx={{ flexGrow: 0 }}>
+                    {TOKEN && <Box sx={{ display:'flex',flexGrow: 0 }}>
+                        <Typography>
+                            Bienvenido, {CURRENT_USER}
+                        </Typography>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <PersonIcon sx={{ color: 'white', display: { xs: 'none', md: 'flex' }, mr: 1 }} />

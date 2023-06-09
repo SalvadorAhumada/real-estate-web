@@ -6,7 +6,9 @@ const {
     login, 
     authenticate, 
     logout,
-    users
+    users,
+    update,
+    delete_user
 } = userController
 
 const userAuth = require('../Middleware/userAuth');
@@ -22,5 +24,9 @@ router.post('/login', login);
 router.post('/logout', logout);
 
 router.post('/authenticate', authenticate);
+
+router.post('/update', update);
+
+router.delete('/delete_user', delete_user);
 
 module.exports = router
