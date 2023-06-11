@@ -1,6 +1,3 @@
-import { useContext, useEffect, useState } from "react";
-import { OtherContext } from "../../../Context/OtherContext";
-import { UnitContext } from "../../../Context/UnitContext";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -8,11 +5,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
-import Popup from '../../Shared/Popup';
-import Button from '@mui/material/Button';
 import './PaymentsDetail.css';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
 

@@ -45,13 +45,12 @@ function App() {
     <div className="App">
       <Navbar navigate={navigate} />
       <Routes>
-        <Route element={<Navigate to="/login" replace />} path="/" />
+        <Route element={<Navigate to="/login" replace />} path="/" exact />
         <Route element={<Login navigate={navigate} />} path="/login" />
         <Route element={<PrivateRoutes />}>
           <Route element={<Main navigate={navigate} />} path="/main" exact />
-          <Route element={<Navigate to="/login" replace />} path="/main/detail" exact />
-          <Route element={<Users />} path="/users" exact />
           <Route element={<DetailList />} path="/main/detail/:clusterName" exact />
+          <Route element={<Users />} path="/users" exact />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

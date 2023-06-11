@@ -30,7 +30,8 @@ export default function UnitDetail({ statuses, executives, customers }) {
     SET_SNACK,
     GET_CLUSTERS_UNITS,
     POPUP_DATA,
-    SET_POPUP_DATA
+    SET_POPUP_DATA,
+    FORMAT_CURRENCY
   } = useContext(OtherContext);
 
   const [status, setStatus] = useState('');
@@ -103,7 +104,13 @@ export default function UnitDetail({ statuses, executives, customers }) {
     let unitRows = [];
 
     for (const k in SELECTED_UNIT) {
-      if (rows[k]) unitRows.push({ key: rows[k], value: SELECTED_UNIT[k] })
+      if (rows[k]) {
+        let row = { key: rows[k], value: SELECTED_UNIT[k] };
+        
+        if(rows[k] === 'PRECIO') row.format = FORMAT_CURRENCY;
+
+        unitRows.push(row)
+      }
     }
     return unitRows;
   }
@@ -220,17 +227,17 @@ export default function UnitDetail({ statuses, executives, customers }) {
         </Typography>
         <Table aria-label="simple table">
           <TableBody>
-            {formatBody().map((row, index) => (
+            {formatBody().map(({key, value, format = null }, index) => (
               <TableRow
                 className="row-unit"
                 key={index}
                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  <b>{row.key}</b>
+                  <b>{key}</b>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.value}
+                  {format ? format(value) : value }
                 </TableCell>
               </TableRow>
             ))}

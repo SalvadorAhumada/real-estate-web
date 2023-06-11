@@ -12,10 +12,9 @@ import XLSX from "xlsx";
 import AddIcon from '@mui/icons-material/Add';
 import './OptionsMenu.css';
 
-
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu({ cluster, type }) {
+export default function LongMenu({ cluster, type, openCreate }) {
 
     const {
         CURRENT_DATE
@@ -44,9 +43,7 @@ export default function LongMenu({ cluster, type }) {
 
     }
 
-    const showExecutiveModal = () => {
-        console.log("-------")
-    }
+    const showExecutiveModal = () => openCreate(true);
 
     let options;
     switch(type) {

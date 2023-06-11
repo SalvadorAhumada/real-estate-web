@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { OtherContext } from "../../Context/OtherContext";
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -7,8 +6,6 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-/* import UnitModal from "./UnitModal"; */
-/* import './ListUnits.css'; */
 import EditUser from "./EditUser";
 import { UserContext } from "../../Context/UserContext";
 import Chip from '@mui/material/Chip';

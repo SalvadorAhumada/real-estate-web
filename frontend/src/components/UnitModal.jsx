@@ -29,11 +29,6 @@ function UnitModal({ open, close }) {
 
     const handleClose = () => close(false);
 
-    const views = [
-        <UnitDetail executives={EXECUTIVES} customers={USERS} statuses={AVAILABLE_STATUS} />,
-        <PaymentsDetails />
-    ];
-
     return (
         <div className="modal-wrapper">
             <Modal
@@ -42,15 +37,6 @@ function UnitModal({ open, close }) {
                 aria-labelledby="unit-modal"
                 aria-describedby="unit-data"
             >
-                {/*                 <Box sx={{ flexGrow: 1, width: '70%', margin: '0 auto', maxWidth: '1300px' }}>
-                    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 1, sm: 4, md: 8 }}>
-                        {views.map((View, index) => (
-                            <Grid item xs={3} sm={2} md={4} key={index} sx={{margin:4}}>
-                                { View }
-                            </Grid>
-                        ))}
-                    </Grid>
-                </Box> */}
                 <Box sx={{ flexGrow: 1, width: '80%', margin: '2rem auto', maxWidth: '1300px' }}>
                     <Grid container spacing={{ xs: 2, md: 3 }}>
                         <Grid item xs={4}>

@@ -26,9 +26,10 @@ function Navbar({ navigate }) {
         TOKEN,
         CURRENT_USER
     } = useContext(UserContext);
-    function showOptions() {
-        if (TOKEN) return ["Inicio", "Ejecutivos", "Clientes"]
-        return [];
+
+    const showOptions = () => {
+        if (TOKEN) return ["Inicio", "Ejecutivos", "Clientes", "Pagos", "Documentos"]
+        return ["Iniciar Sesión"];
     }
 
     const pages = showOptions();
@@ -54,6 +55,9 @@ function Navbar({ navigate }) {
                 break;
             case 'Ejecutivos':
                 REDIRECT_TO('/users', navigate);
+                break;
+            case 'Iniciar Sesión':
+                REDIRECT_TO('/login', navigate);
             default:
                 return null;
         }
@@ -63,7 +67,7 @@ function Navbar({ navigate }) {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
-
+    
     return (
         <AppBar position="static">
             <Container maxWidth="xl">
@@ -117,7 +121,7 @@ function Navbar({ navigate }) {
                             }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                <MenuItem key={page} onClick={() => handleCloseNavMenu(page)}>
                                     <Typography textAlign="center">{page}</Typography>
                                 </MenuItem>
                             ))}
@@ -154,11 +158,11 @@ function Navbar({ navigate }) {
                         ))}
                     </Box>
 
-                    {TOKEN && <Box sx={{ display:'flex',flexGrow: 0 }}>
-                        <Typography>
-                            Bienvenido, {CURRENT_USER}
+                    {TOKEN && <Box sx={{ display: 'flex', flexGrow: 0, alignItems: 'center' }}>
+                        <Typography variant='span'>
+                            Bienvenido, { CURRENT_USER ? CURRENT_USER.name ?  CURRENT_USER.name : '' : ''}
                         </Typography>
-                        <Tooltip title="Open settings">
+                        <Tooltip title="Opciones">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <PersonIcon sx={{ color: 'white', display: { xs: 'none', md: 'flex' }, mr: 1 }} />
                             </IconButton>

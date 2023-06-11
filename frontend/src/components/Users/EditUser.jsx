@@ -4,7 +4,6 @@ import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -78,7 +77,17 @@ export default function FormDialog({ open, close, executive, updateExecutive }) 
 
     const onAccept = () => {
         DELETE_EXECUTIVE({ userId: executive.id }).then(
-            () => {
+            (res) => {
+
+                if (res.error) {
+                    SET_SNACK({
+                        value: true,
+                        message: 'No es posible eliminar a usuario actual',
+                        severity: 'error'
+                    });
+                    return;
+                }
+
                 GET_EXECUTIVES();
                 setOpenConfirm(false);
                 close(false);
@@ -149,7 +158,7 @@ export default function FormDialog({ open, close, executive, updateExecutive }) 
                 </DialogContent>
                 <DialogActions>
                     <Button color="error" onClick={handleDelete}>Eliminar</Button>
-                    <Button onClick={handleClose}>Cancelar</Button>
+                    <Button color="secondary" onClick={handleClose}>Cancelar</Button>
                     <Button onClick={sendUpdate}>Actualizar</Button>
                 </DialogActions>
             </Dialog>

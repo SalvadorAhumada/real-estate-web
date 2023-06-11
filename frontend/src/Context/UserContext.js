@@ -22,7 +22,7 @@ export const UserContextProvider = ({ children }) => {
 
     const [USERS, SET_USERS] = useState([]);
 
-    const [CURRENT_USER, SET_CURRENT_USER] = useState('');
+    const [CURRENT_USER, SET_CURRENT_USER] = useState({});
 
     const POST_USER = async (data) => {
 
@@ -34,7 +34,10 @@ export const UserContextProvider = ({ children }) => {
         });
 
         response = await response.json();
-        SET_CURRENT_USER(response.user.name);
+        
+        if(response.session && response.session.user) {
+            SET_CURRENT_USER(response.session.user);
+        }
         return response;
 
     };
@@ -46,7 +49,10 @@ export const UserContextProvider = ({ children }) => {
             headers
         });
         auth = await auth.json();
-        SET_TOKEN(auth.jwt);
+        if(auth.jwt) {
+            SET_TOKEN(auth.jwt);
+            SET_CURRENT_USER(auth.session.user)
+        }
         return auth;
     }
 
@@ -107,6 +113,18 @@ export const UserContextProvider = ({ children }) => {
         return deletedExec;
     }
 
+    const CREATE_EXECUTIVE = async(data) => {
+        let newExecutive = await fetch('http://localhost:3030/api/users/signup', {
+            method: methods.POST,
+            credentials,
+            headers,
+            body: JSON.stringify(data)
+        })
+
+        newExecutive = await newExecutive.json();
+        return newExecutive;
+    }
+
     const userContext = {
         AUTHENTICATE_USER,
         LOG_OUT,
@@ -119,7 +137,8 @@ export const UserContextProvider = ({ children }) => {
         USERS,
         UPDATE_USER,
         DELETE_EXECUTIVE,
-        CURRENT_USER
+        CURRENT_USER,
+        CREATE_EXECUTIVE
     }
 
     return <UserContext.Provider value={userContext}>

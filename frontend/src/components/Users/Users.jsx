@@ -2,8 +2,12 @@ import Typography from '@mui/material/Typography';
 import OptionsMenu from '../Shared/OptionsMenu';
 import UsersList from './UsersList';
 import './Users.css';
+import CreateUser from './CreateUser';
+import { useState } from 'react';
 
 function Users() {
+
+  const [openCreate, setOpenCreate] = useState(false);
 
   return (
     <div className="users-page-wrapper">
@@ -12,9 +16,10 @@ function Users() {
         <Typography gutterBottom variant="h1" component="div">
           EJECUTIVOS
         </Typography>
-        <OptionsMenu type={'users'}/>
+        <OptionsMenu type={'users'} openCreate={setOpenCreate}/>
       </section>
       <UsersList />
+      <CreateUser open={openCreate} close={setOpenCreate}/>
     </div>
     </div>
   );

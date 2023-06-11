@@ -30,9 +30,9 @@ const authenticate = async (req, res) => {
 
         let value = cookie.split("=")[1];
 
-        if (value) {
-
-          return res.status(200).send({ jwt: value })
+        if (value && req.session.user) {
+          
+          return res.status(200).send({ jwt: value, session: req.session })
 
         } else {
           return res.status(403).send(noAuth);
@@ -48,14 +48,20 @@ const authenticate = async (req, res) => {
 /**
  * Creates new user
  * POST api/users/signup
+ * @param {name} string 
+ * @param {lastname} string 
+ * @param {type} string 
  * @param {email} string  
  * @param {password} string
  */
 const signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, name, lastname, type } = req.body;
     const data = {
+      name,
+      lastname,
       email,
+      type,
       password: await bcrypt.hash(password, 10),
     };
     const user = await USER.create(data);
@@ -85,7 +91,7 @@ const login = async (req, res) => {
   try {
 
     const { email, password } = req.body;
-    
+
     let user = await USER.findOne({
       where: { email: email },
       raw: true
@@ -100,16 +106,19 @@ const login = async (req, res) => {
     let token = jwt.sign({ id: user.id }, process.env.SECRET_KEY, {
       expiresIn: MILISECONDS
     });
+
     delete user.password;
     delete user.deletedAt;
 
     res.cookie("ar3djwt", token, { maxAge: MILISECONDS, httpOnly: true });
-    
+
+    req.session.authenticated = true;
+    req.session.user = { name: user.name, lastname: user.lastname, type: user.type, id: user.id }
+
     return res.status(201).send({
       message: "Login Successful",
-      email,
       token,
-      user,
+      session: req.session,
       ok: true
     });
 
@@ -188,42 +197,35 @@ const update = async (req, res) => {
 
     switch (name) {
       case 'SequelizeUniqueConstraintError':
-        res.status(409).send({ errorCode:409, msg: 'Correo electrónico ya existe en base de datos' });
-      break;
+        res.status(409).send({ errorCode: 409, msg: 'Correo electrónico ya existe en base de datos' });
+        break;
     }
 
   }
 }
 /**
- * List of all users
- * POST api/users/update
+ * Delete User
+ * POST api/users/delete_user
  *  * @param {userId} integer
  *  * @param {currentUserId} integer
  */
 const delete_user = async (req, res) => {
 
-  /*
-  TODO: No permitir que se elimine a si mismo 
-  */
-
-  console.log("-----------------------------")
-  console.log(req.user)
-  return res.status(200)
-
-  const { userId } = req.body
-
   try {
 
-    const deletedUser = await USER.destroy({
-      where: { id: userId }
-    });
+    const { userId } = req.body;
+
+    if(!req.session) return res.status(400).send({ error: true, msg: "Sesión caducada. Por favor inicie sesión nuevamente para continuar."})
+
+    if (userId === req.session.user.id) return res.status(400).send({ error: true, msg: "Can't self-delete" })
+
+    const deletedUser = await USER.destroy({ where: { id: userId } });
 
     res.status(200).send({ data: deletedUser });
 
   } catch (ex) {
-
+    console.log(ex)
   }
-
 
 }
 

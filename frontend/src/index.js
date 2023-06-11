@@ -21,8 +21,17 @@ const theme = createTheme({
       fontSize: '2rem',
       fontWeight: 'bolder',
       margin: '1rem'
-    }
+    },
+    span: {
+      fontFamily: 'Pathway Extreme',
+      fontSize:'14px',
+    },
   },
+  palette: {
+    secondary: {
+      main: "rgba(0, 0, 0, 0.6)"
+    }
+  }
 });
 
 root.render(
