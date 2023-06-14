@@ -8,6 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { UserContextProvider } from './Context/UserContext';
 import { OtherContextProvider } from './Context/OtherContext';
 import { UnitContextProvider } from "./Context/UnitContext";
+import { FinancialContextProvider } from "./Context/FinancialContext";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import App from "./App";
 
@@ -24,7 +25,7 @@ const theme = createTheme({
     },
     span: {
       fontFamily: 'Pathway Extreme',
-      fontSize:'14px',
+      fontSize: '14px',
     },
   },
   palette: {
@@ -37,15 +38,17 @@ const theme = createTheme({
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <UnitContextProvider>
-        <OtherContextProvider>
-          <UserContextProvider>
-            <Router>
-              <App />
-            </Router>
-          </UserContextProvider>
-        </OtherContextProvider>
-      </UnitContextProvider>
+      <FinancialContextProvider>
+        <UnitContextProvider>
+          <OtherContextProvider>
+            <UserContextProvider>
+              <Router>
+                <App />
+              </Router>
+            </UserContextProvider>
+          </OtherContextProvider>
+        </UnitContextProvider>
+      </FinancialContextProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

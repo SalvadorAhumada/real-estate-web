@@ -16,13 +16,24 @@ import Button from '@mui/material/Button';
 import './UnitDetail.css';
 import UserSelect from './UserSelect';
 
-export default function UnitDetail({ statuses, executives, customers }) {
+export default function UnitDetail({
+  unit,
+  statuses,
+  executives,
+  customers,
+  financial,
+  paymentMethod,
+  paymentPlan,
+  setPaymentMethod,
+  setPaymentPlan,
+  updateUnitsFinancial
+}) {
 
   const {
-    SELECTED_UNIT,
     UPDATE_STATUS,
     UPDATE_USER,
     SET_SELECTED_UNIT,
+    SELECTED_UNIT,
     UPDATE_CUSTOMER
   } = useContext(UnitContext);
 
@@ -47,20 +58,38 @@ export default function UnitDetail({ statuses, executives, customers }) {
   });
 
   useEffect(() => {
-    setStatus(SELECTED_UNIT.status.name)
-  }, [])
-  
-  const unit = SELECTED_UNIT;
+    setStatus(unit.status.name)
+  }, [SELECTED_UNIT])
 
   const handleChangeStatus = (event) => {
     setStatus(event.target.value);
     SET_POPUP_DATA({
-      title: '¿Actualizar estado?', 
+      title: '¿Actualizar estado?',
       body: `${unit.name} cambiara su estado a ${event.target.value}.`,
       type: 'status'
     })
     setOpen(true);
   };
+
+  const handleChangePlan = (event) => {
+    setPaymentPlan(event.target.value);
+    SET_POPUP_DATA({
+      title: '¿Actualizar Plan de Pago?',
+      body: `${unit.name} sera asignado el plan "${event.target.value}".`,
+      type: 'plan'
+    })
+    setOpen(true);
+  }
+
+  const handleChangeMethod = (event) => {
+    setPaymentMethod(event.target.value);
+    SET_POPUP_DATA({
+      title: '¿Actualizar Método de Pago?',
+      body: `${unit.name} sera asignado el metódo "${event.target.value}".`,
+      type: 'method'
+    })
+    setOpen(true);
+  }
 
   const handleChangeExecutive = () => {
 
@@ -82,7 +111,7 @@ export default function UnitDetail({ statuses, executives, customers }) {
     if (unit.customer) {
       SET_POPUP_DATA({
         title: '¿Eliminar a este cliente?',
-        body: `${unit.customer.name} ${unit.customer.lastname} sera desvinculado/a de esta unidad. ¿Desea continuar?`,
+        body: `${unit.customer.name} ${unit.customer.lastname} sera desvinculado/a de esta unidad y la unidad cambiara de estatus a DISPONIBLE. ¿Desea continuar?`,
         type: 'customer'
       })
       setOpen(true);
@@ -103,11 +132,11 @@ export default function UnitDetail({ statuses, executives, customers }) {
 
     let unitRows = [];
 
-    for (const k in SELECTED_UNIT) {
+    for (const k in unit) {
       if (rows[k]) {
-        let row = { key: rows[k], value: SELECTED_UNIT[k] };
-        
-        if(rows[k] === 'PRECIO') row.format = FORMAT_CURRENCY;
+        let row = { key: rows[k], value: unit[k] };
+
+        if (rows[k] === 'PRECIO') row.format = FORMAT_CURRENCY;
 
         unitRows.push(row)
       }
@@ -116,20 +145,20 @@ export default function UnitDetail({ statuses, executives, customers }) {
   }
 
   const onCancel = () => {
-    setStatus(SELECTED_UNIT.status.name)
+    setStatus(unit.status.name)
     setOpen(false)
   }
 
   const updateStatus = () => {
     const selectedStatus = available_status.find(s => s.name === status);
-    UPDATE_STATUS({ unitId: SELECTED_UNIT.id, statusId: selectedStatus.id }).then(() => {
+    UPDATE_STATUS({ unitId: unit.id, statusId: selectedStatus.id }).then(() => {
       setOpen(false)
       SET_SNACK({
         value: true,
         message: 'Unidad actualizada con éxito',
         severity: 'success'
       });
-      GET_CLUSTERS_UNITS(SELECTED_UNIT.cluster.id);
+      GET_CLUSTERS_UNITS(unit.cluster.id);
     }).catch(ex => {
       console.log(ex)
     })
@@ -140,41 +169,71 @@ export default function UnitDetail({ statuses, executives, customers }) {
     UPDATE_USER(data).then(
       () => {
         SET_SNACK({
-            value: true,
-            message: 'Unidad actualizada con éxito',
-            severity: 'success'
+          value: true,
+          message: 'Unidad actualizada con éxito',
+          severity: 'success'
         });
         setOpen(false);
         GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
-            const updatedUnit = units.find(u => u.id === unit.id);
-            SET_SELECTED_UNIT(updatedUnit);
+          const updatedUnit = units.find(u => u.id === unit.id);
+          SET_SELECTED_UNIT(updatedUnit);
         })
-    }
+      }
     )
-    .catch( ex => {
-      console.log(ex)
-    })
+      .catch(ex => {
+        console.log(ex)
+      })
   }
 
   const removeCustomer = () => {
-    const data = { customerId: null, unitId: unit.id, clusterId: unit.cluster.id };
+    const data = { customerId: null, unitId: unit.id, clusterId: unit.cluster.id, statusId: 1 };
     UPDATE_CUSTOMER(data).then(
       () => {
         SET_SNACK({
-            value: true,
-            message: 'Unidad actualizada con éxito',
-            severity: 'success'
+          value: true,
+          message: 'Unidad actualizada con éxito',
+          severity: 'success'
         });
         setOpen(false);
         GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
-            const updatedUnit = units.find(u => u.id === unit.id);
-            SET_SELECTED_UNIT(updatedUnit);
+          const updatedUnit = units.find(u => u.id === unit.id);
+          SET_SELECTED_UNIT(updatedUnit);
         })
-    }
+      }
     )
-    .catch( ex => {
-      console.log(ex)
-    })
+      .catch(ex => {
+        console.log(ex)
+      })
+  }
+
+  const updatePaymentPlan = () => {
+    const data = { unitId: unit.id, plan: paymentPlan };
+    console.log(data);
+    updateUnitsFinancial(data).then(
+      () => {
+        SET_SNACK({
+          value: true,
+          message: 'Unidad actualizada con éxito',
+          severity: 'success'
+        });
+        setOpen(false);
+      }
+    )
+  }
+
+  const updatePaymentMethod = () => {
+    const data = { unitId: unit.id, method: paymentMethod };
+    console.log(data);
+    updateUnitsFinancial(data).then(
+      () => {
+        SET_SNACK({
+          value: true,
+          message: 'Unidad actualizada con éxito',
+          severity: 'success'
+        });
+        setOpen(false);
+      }
+    )
   }
 
   const onAccept = () => {
@@ -187,6 +246,13 @@ export default function UnitDetail({ statuses, executives, customers }) {
         break;
       case 'customer':
         removeCustomer();
+        break;
+      case 'plan':
+        updatePaymentPlan();
+        break;
+      case 'method':
+        updatePaymentMethod()
+        break;
     }
   }
 
@@ -217,6 +283,53 @@ export default function UnitDetail({ statuses, executives, customers }) {
     </Button>
   }
 
+  const getFinancialData = () => {
+    if (financial && financial.plansoptions && financial.methodsoptions) return <>
+      <TableRow>
+        <TableCell component="th" scope="row">
+          <b>PLAN</b>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          <FormControl fullWidth>
+            <Select
+              className="form-wrapper"
+              labelId="plan-selector"
+              id="plan-select"
+              value={financial.plan}
+              sx={{ padding: 0, width: '140px' }}
+              onChange={handleChangePlan}
+            >
+              {financial.plansoptions.plans.map(p => {
+                return <MenuItem key={p} value={p}>{p}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
+        </TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell component="th" scope="row">
+          <b>MÉTODO</b>
+        </TableCell>
+        <TableCell component="th" scope="row">
+          <FormControl fullWidth>
+            <Select
+              className="form-wrapper"
+              labelId="method-selector"
+              id="method-select"
+              value={financial.method}
+              sx={{ padding: 0, width: '250px' }}
+              onChange={handleChangeMethod}
+            >
+              {financial.methodsoptions.methods.map(m => {
+                return <MenuItem key={m} value={m}>{m}</MenuItem>
+              })}
+            </Select>
+          </FormControl>
+        </TableCell>
+      </TableRow>
+    </>
+  }
+
   return (
     <div className="unit-wrapper">
       <Popup open={open} setOpen={setOpen} onCancel={onCancel} onAccept={onAccept} popupTitle={POPUP_DATA.title} popupBody={POPUP_DATA.body} />
@@ -227,7 +340,7 @@ export default function UnitDetail({ statuses, executives, customers }) {
         </Typography>
         <Table aria-label="simple table">
           <TableBody>
-            {formatBody().map(({key, value, format = null }, index) => (
+            {formatBody().map(({ key, value, format = null }, index) => (
               <TableRow
                 className="row-unit"
                 key={index}
@@ -237,7 +350,7 @@ export default function UnitDetail({ statuses, executives, customers }) {
                   <b>{key}</b>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {format ? format(value) : value }
+                  {format ? format(value) : value}
                 </TableCell>
               </TableRow>
             ))}
@@ -278,6 +391,7 @@ export default function UnitDetail({ statuses, executives, customers }) {
                 {hasCustomer()}
               </TableCell>
             </TableRow>
+            {getFinancialData()}
           </TableBody>
         </Table>
       </TableContainer>

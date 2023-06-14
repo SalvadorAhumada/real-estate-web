@@ -1,10 +1,13 @@
 import { createContext, useState } from 'react';
+import { hostUrl }  from './index';
 
 export const OtherContext = createContext({});
 
 export const OtherContextProvider = ({ children }) => {
 
     const [CLUSTERS, SET_CLUSTERS] = useState([]);
+
+    const [IS_LOADING, SET_IS_LOADING] = useState(true);
 
     const [POPUP_DATA, SET_POPUP_DATA] = useState({
         title: '',
@@ -25,7 +28,7 @@ export const OtherContextProvider = ({ children }) => {
     const CURRENT_DATE = new Date().toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
 
     const GET_CLUSTERS_UNITS = async (clusterId) => {
-        let units = await fetch(`http://localhost:3030/api/clusters/${clusterId}`, {
+        let units = await fetch(`${hostUrl}/api/clusters/${clusterId}`, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -34,11 +37,12 @@ export const OtherContextProvider = ({ children }) => {
         });
         units = await units.json();
         SET_CLUSTER_UNITS(units);
+        SET_IS_LOADING(false);
         return units;
     }
 
     const GET_CLUSTERS = async () => {
-        let clusters = await fetch('http://localhost:3030/api/clusters/', {
+        let clusters = await fetch(`${hostUrl}/api/clusters/`, {
             method: 'GET',
             credentials: "include",
             headers: {
@@ -65,7 +69,9 @@ export const OtherContextProvider = ({ children }) => {
         SET_SNACK,
         POPUP_DATA,
         SET_POPUP_DATA,
-        CURRENT_DATE
+        CURRENT_DATE,
+        IS_LOADING,
+        SET_IS_LOADING
     }
 
     return <OtherContext.Provider value={otherContext}>

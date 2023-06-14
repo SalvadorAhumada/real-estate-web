@@ -6,6 +6,7 @@ const units = require('./src/Database/Routes/units');
 const users = require('./src/Database/Routes/users');
 const clusters = require('./src/Database/Routes/clusters');
 const customers = require('./src/Database/Routes/customers');
+const financials = require('./src/Database/Routes/financials');
 const { shouldRestoreDB } = require('./src/Database/Utils/index');
 const session = require('express-session');
 const dropTable = process.argv[2];
@@ -38,6 +39,7 @@ app.use('/api/users', users);
 app.use('/api/units', units);
 app.use('/api/clusters', clusters);
 app.use('/api/customers', customers);
+app.use('/api/financials', financials);
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);

@@ -160,7 +160,7 @@ const users = async (_req, res) => {
   }
 }
 /**
- * List of all users
+ * update one user
  * POST api/users/update
  *  * @param {user} USER
  */

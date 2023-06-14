@@ -70,19 +70,19 @@ const update_user = async (req, res) => {
 
 /**
  * Update userId in selectedUnit
- * GET api/units/update_customers
+ * POST api/units/update_customers
  * @param { userId } integer 
  * @param { unitId } integer 
+ * @param { statusId } integer 
  */
 const update_customer = async (req, res) => {
 
-    const { customerId, unitId } = req.body;
-    console.log(req.body); 
+    const { customerId, unitId, statusId } = req.body;
 
     try {
 
         const updatedUnit = await UNITS.update(
-            { customerId },
+            { customerId, statusId },
             { where: { id: unitId } }
         )
 

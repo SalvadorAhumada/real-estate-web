@@ -63,7 +63,7 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
 
     const text = {
         title: type === 'customer' ? 'Clientes' : 'Ejecutivos',
-        body: type === 'customer' ? 'Asignar un cliente a esta unidad.' : 'Asignar un ejecutivo encargado de esta unidad.',
+        body: type === 'customer' ? `NOTA: La unidad cambiara de estatus a RESERVADO automáticamente al asignarle un cliente.` : 'Asignar un ejecutivo encargado de esta unidad.',
     }
 
     const {
@@ -79,14 +79,12 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
-    const handleListItemClick = (_event, index) => {
-        setSelectedIndex(index);
-    };
+    const handleListItemClick = (_event, index) => setSelectedIndex(index);
 
     const handleUserAssign = () => {
         const callback = type === 'customer' ? UPDATE_CUSTOMER : UPDATE_USER
         const data = type === 'customer' ?
-            { customerId: customers[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id } :
+            { customerId: customers[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id, statusId: 3 } :
             { userId: executives[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id }
 
         callback(data).then(
@@ -107,9 +105,8 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
         })
     }
 
-    const handleClose = () => {
-        setOpen(false);
-    };
+    const handleClose = () => setOpen(false);
+
     const usersExist = () => {
         const users = type === 'customer' ? customers : executives
 
@@ -142,20 +139,24 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                     {text.title}
                 </BootstrapDialogTitle>
-                <DialogContent dividers>
+                <DialogActions className='users-wrapper'>
+                    <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                        <List component="nav" aria-label="unit executives">
+                            {usersExist()}
+                        </List>
+                    </Box>
+                </DialogActions>
+                <Divider />
+                <DialogContent>
                     <Typography gutterBottom>
                         {text.body}
                     </Typography>
                 </DialogContent>
-                <DialogActions className='users-wrapper'>
-                    <Box sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
-                        <List component="nav" aria-label="unit executives">
-                            {usersExist()}
-                        </List>
-                        <Divider />
-                    </Box>
-                </DialogActions>
+                <Divider />
                 <DialogActions>
+                <Button color="secondary" onClick={handleClose}>
+                        CANCELAR
+                    </Button>
                     <Button autoFocus onClick={handleUserAssign}>
                         ASIGNAR
                     </Button>

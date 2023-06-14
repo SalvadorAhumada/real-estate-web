@@ -4,25 +4,25 @@ import { useParams } from "react-router-dom";
 import ListUnits from './ListUnits';
 import Typography from '@mui/material/Typography';
 import OptionsMenu from './Shared/OptionsMenu';
+import Loading from "../components/Shared/Loading"
 import './DetailList.css';
 
 function DetailList() {
-
   const { clusterName } = useParams();
 
   const {
     GET_CLUSTERS,
     GET_CLUSTERS_UNITS,
     CLUSTER_UNITS,
-    CLUSTERS
+    CLUSTERS,
+    IS_LOADING
   } = useContext(OtherContext);
 
   useEffect(() => {
-    GET_CLUSTERS()
-  }, [])
+    if (CLUSTERS.length === 0) GET_CLUSTERS()
+  }, [CLUSTERS])
 
   useEffect(() => {
-
     if (CLUSTERS.length !== 0) {
       const selectedCluster = CLUSTERS.find(c => c.name === clusterName.toUpperCase());
       GET_CLUSTERS_UNITS(selectedCluster.id)
@@ -30,8 +30,10 @@ function DetailList() {
 
   }, [CLUSTERS])
 
+  if(IS_LOADING) return <Loading />
+  
   const name = CLUSTER_UNITS[0] ? CLUSTER_UNITS[0].cluster.name : '';
-
+  
   return (
     <div className="detail-list">
       <section className="config-wrapper">

@@ -1,6 +1,7 @@
 import { useEffect, useContext } from "react";
 import Card from "./Card";
 import { UnitContext } from "../Context/UnitContext";
+import { OtherContext } from "../Context/OtherContext";
 
 function Main({ navigate }) {
 
@@ -9,7 +10,12 @@ function Main({ navigate }) {
     TOTAL_COUNT
   } = useContext(UnitContext);
 
+  const {
+    SET_IS_LOADING
+  } = useContext(OtherContext);
+
   useEffect(() => {
+    SET_IS_LOADING(true)
     GET_COUNT();
   }, [])
 
