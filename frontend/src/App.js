@@ -26,8 +26,10 @@ function App() {
   } = useContext(UserContext);
 
   const {
-    SET_SNACK
+    SET_SNACK,
+    REDIRECT_TO,
   } = useContext(OtherContext);
+  
 
   useEffect(() => {
     AUTHENTICATE_USER().then((res) => {
@@ -37,6 +39,7 @@ function App() {
           message: 'Sesión caducada. Por favor inicie sesión nuevamente para continuar.',
           severity: 'error'
         })
+        REDIRECT_TO("/login", navigate);
       }
     })
   }, []);

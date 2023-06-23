@@ -36,7 +36,8 @@ function UnitModal({ open, close }) {
     const {
         GET_UNITS_FINANCIAL,
         FINANCIAL_DATA,
-        UPDATE_UNITS_FINANCIAL
+        UPDATE_UNITS_FINANCIAL,
+        SET_FINANCIAL_DATA
     } = useContext(FinancialContext);
 
     const {
@@ -50,6 +51,7 @@ function UnitModal({ open, close }) {
     }, [])
 
     useEffect(() => {
+        SET_FINANCIAL_DATA({})
         if (SELECTED_UNIT.id) {
             GET_UNITS_FINANCIAL(SELECTED_UNIT.id);
         }
@@ -75,6 +77,7 @@ function UnitModal({ open, close }) {
                 onClose={handleClose}
                 aria-labelledby="unit-modal"
                 aria-describedby="unit-data"
+                style={{overflowY: 'auto'}}
             >
                 <Box sx={{ flexGrow: 1, width: '80%', margin: '2rem auto', maxWidth: '1300px' }}>
                     <Popup
@@ -110,6 +113,7 @@ function UnitModal({ open, close }) {
                                 unitId={SELECTED_UNIT.id}
                                 openModal={setOpenModal}
                                 financial={FINANCIAL_DATA}
+                                open={open}
                             />
                         </Grid>
                         {/*                         <Grid item xs={4}>

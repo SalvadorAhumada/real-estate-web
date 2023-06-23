@@ -18,21 +18,8 @@ export const FinancialContextProvider = ({ children }) => {
 
     const [FINANCIAL_DATA, SET_FINANCIAL_DATA] = useState({});
 
-/*     const GET_FINANCIAL_UNIT = async (clusterId) => {
-        let units = await fetch(`http://localhost:3030/api/clusters/${clusterId}`, {
-            method: 'GET',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        units = await units.json();
-        SET_CLUSTER_UNITS(units);
-        return units;
-    } */
-
     const UPDATE_UNITS_FINANCIAL = async (data) => {
-        let updatedPlan =  await fetch(`http://localhost:3030/api/financials`, {
+        let updatedPlan = await fetch(`http://localhost:3030/api/financials`, {
             method: methods.POST,
             credentials,
             headers,
@@ -45,7 +32,7 @@ export const FinancialContextProvider = ({ children }) => {
     }
 
     const GET_UNITS_FINANCIAL = async (unitId) => {
-        let updatedPlan =  await fetch(`http://localhost:3030/api/financials/${unitId}`, {
+        let updatedPlan = await fetch(`http://localhost:3030/api/financials/${unitId}`, {
             method: methods.GET,
             credentials,
             headers
@@ -60,7 +47,8 @@ export const FinancialContextProvider = ({ children }) => {
     const financialContext = {
         GET_UNITS_FINANCIAL,
         FINANCIAL_DATA,
-        UPDATE_UNITS_FINANCIAL
+        UPDATE_UNITS_FINANCIAL,
+        SET_FINANCIAL_DATA
     }
 
     return <FinancialContext.Provider value={financialContext}>

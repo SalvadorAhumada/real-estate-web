@@ -299,7 +299,7 @@ export default function UnitDetail({
               sx={{ padding: 0, width: '140px' }}
               onChange={handleChangePlan}
             >
-              {financial.plansoptions.plans.map(p => {
+              {financial.plansoptions.map(p => {
                 return <MenuItem key={p} value={p}>{p}</MenuItem>
               })}
             </Select>
@@ -320,7 +320,7 @@ export default function UnitDetail({
               sx={{ padding: 0, width: '250px' }}
               onChange={handleChangeMethod}
             >
-              {financial.methodsoptions.methods.map(m => {
+              {financial.methodsoptions.map(m => {
                 return <MenuItem key={m} value={m}>{m}</MenuItem>
               })}
             </Select>

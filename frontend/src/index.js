@@ -9,6 +9,7 @@ import { UserContextProvider } from './Context/UserContext';
 import { OtherContextProvider } from './Context/OtherContext';
 import { UnitContextProvider } from "./Context/UnitContext";
 import { FinancialContextProvider } from "./Context/FinancialContext";
+import { PaymentsContextProvider } from "./Context/PaymentsContext";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import App from "./App";
 
@@ -38,17 +39,19 @@ const theme = createTheme({
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <FinancialContextProvider>
-        <UnitContextProvider>
-          <OtherContextProvider>
-            <UserContextProvider>
-              <Router>
-                <App />
-              </Router>
-            </UserContextProvider>
-          </OtherContextProvider>
-        </UnitContextProvider>
-      </FinancialContextProvider>
+      <PaymentsContextProvider>
+        <FinancialContextProvider>
+          <UnitContextProvider>
+            <OtherContextProvider>
+              <UserContextProvider>
+                <Router>
+                  <App />
+                </Router>
+              </UserContextProvider>
+            </OtherContextProvider>
+          </UnitContextProvider>
+        </FinancialContextProvider>
+      </PaymentsContextProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

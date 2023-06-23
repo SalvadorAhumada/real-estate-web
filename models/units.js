@@ -10,7 +10,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      units.belongsTo(models.clusters)
+      units.belongsTo(models.status)
+      units.belongsTo(models.users)
+      units.belongsTo(models.customers)
     }
   }
   units.init({
@@ -26,13 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'units',
   });
-
-  units.associate = function(models) {
-    units.belongsTo(models.clusters)
-    units.belongsTo(models.status)
-    units.belongsTo(models.users)
-    units.belongsTo(models.customers)
-  }
   
   return units;
 };

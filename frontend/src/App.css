@@ -28,10 +28,44 @@
   color: #61dafb;
 }
 
+.muiClon {
+  padding: 16px;
+  border: 1px solid #c4c4c4;
+  color: #1d1b1b;
+  font-family: 'Pathway Extreme';
+  font-size: 16px;
+  width: 62%;
+  border-radius: 4px;
+  margin: 1px;
+}
+
+.muiClon:hover {
+  border: 1px solid #000000;
+}
+
+.muiClon:focus {
+  border: 2px solid #1976d2;
+}
+
+.currency-input:focus-within::after {
+  color:#1976d2;
+}
+
+.currency-input::after {
+  content: "Cantidad";
+  position: absolute;
+  left: 39px;
+  top: 168px;
+  color: #c6c6c6;
+  font-family: 'Pathway Extreme';
+  font-size: 12px;
+  background: white;
+  padding: 0px 5px;
+}
 
 html,
 body {
-  height:100%;
+  height: 100%;
   background: linear-gradient(to top, #ffffff98, #ffffff7b), url('../public/img/background.jpg') no-repeat top center;
   background-size: cover;
 }
@@ -40,6 +74,7 @@ body {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

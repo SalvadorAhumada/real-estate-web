@@ -34,13 +34,13 @@ export default function AlertDialogSlide({
     const [selectedIndexMethod, setSelectedIndexMethod] = useState(-1);
 
     const handleMethodClick = (_event, index) => {
-        const plan = financialData.plansoptions.plans[index];
+        const plan = financialData.plansoptions[index];
         setPaymentPlan(plan);
         setSelectedIndexPlan(index);
     }
 
     const handlePlanClick = (_event, index) => {
-        const method = financialData.methodsoptions.methods[index];
+        const method = financialData.methodsoptions[index];
         setPaymentMethod(method);
         setSelectedIndexMethod(index);
     }
@@ -57,7 +57,7 @@ export default function AlertDialogSlide({
 
                 return <>
                 <List component="nav" aria-label="unit executives">
-                    {financialData.plansoptions.plans.map((plan, index) => {
+                    {financialData.plansoptions.map((plan, index) => {
                         return <ListItemButton
                             key={index}
                             selected={selectedIndexPlan === index}
@@ -74,7 +74,7 @@ export default function AlertDialogSlide({
                         Seleccione método de pago
                     </DialogContentText>
                 <List component="nav" aria-label="unit executives">
-                    {financialData.methodsoptions.methods.map((method, index) => {
+                    {financialData.methodsoptions.map((method, index) => {
                         return <ListItemButton
                             key={index}
                             selected={selectedIndexMethod === index}

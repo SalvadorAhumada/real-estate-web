@@ -24,8 +24,8 @@ export default function ListUnits({ data }) {
   const [open, setOpen] = useState(false);
 
   const setUnit = (unit) => {
-    setOpen(true);
     SET_SELECTED_UNIT(unit);
+    setOpen(true);
   }
 
   return (

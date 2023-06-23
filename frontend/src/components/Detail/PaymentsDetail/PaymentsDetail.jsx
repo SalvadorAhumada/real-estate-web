@@ -1,18 +1,40 @@
-import { useContext } from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
+import { useContext, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import './PaymentsDetail.css';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
 import { FinancialContext } from '../../../Context/FinancialContext';
+import PaymentModal from './PaymentModal';
+import { PaymentsContext } from '../../../Context/PaymentsContext';
+import {
+    TableHead,
+    Box,
+    Button,
+    Paper,
+    TableRow,
+    TableContainer,
+    TableCell,
+    TableBody,
+    Table
+} from '@mui/material';
+import { OtherContext } from '../../../Context/OtherContext';
 
-export default function PaymentsDetail({ financial, openModal, unitId, setModalType }) {
+export default function PaymentsDetail({
+    financial,
+    openModal,
+    unitId,
+    setModalType
+}) {
+
+    const {
+        UNIT_PAYMENTS
+    } = useContext(PaymentsContext);
+
+    const {
+        FORMAT_DATE,
+        FORMAT_CURRENCY
+    } = useContext(OtherContext)
+
+    const [openPayment, setOpenPayment] = useState(false);
 
     const {
         UPDATE_UNITS_FINANCIAL
@@ -25,6 +47,8 @@ export default function PaymentsDetail({ financial, openModal, unitId, setModalT
         })
     }
 
+    const openPaymentModal = () => setOpenPayment(true);
+
     const css = {
         height100: { height: '100%', textAlign: 'center' },
         alignCenter: { textAlign: 'center', margin: 1 },
@@ -33,19 +57,39 @@ export default function PaymentsDetail({ financial, openModal, unitId, setModalT
     }
 
     let hasPaymentPlan = financial.id ?
-        <Table className='payments-list-wrapper' aria-label="simple table">
-            <TableBody>
-                <TableRow>
-                    <TableCell>
-                        <Box sx={css.leftAlign}>
-                            <Button variant="contained" size="small">
-                                Agregar Pago
-                            </Button>
-                        </Box>
-                    </TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
+        <>
+            <PaymentModal open={openPayment} setOpen={setOpenPayment} financial={financial} payments={UNIT_PAYMENTS} />
+            <Box sx={css.leftAlign}>
+                <Button variant="contained" size="small" onClick={openPaymentModal}>
+                    Agregar Pago
+                </Button>
+            </Box>
+            <Table className='payments-list-wrapper' aria-label="simple table">
+                <TableHead>
+                    <TableRow>
+                        <TableCell><b>No. Pago</b></TableCell>
+                        <TableCell><b>Cantidad</b></TableCell>
+                        <TableCell><b>Tipo</b></TableCell>
+                        <TableCell><b>Fecha De Pago</b></TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {UNIT_PAYMENTS.length ? UNIT_PAYMENTS.map(({ paymentno, paymentamount, paymenttype, duedate }, index) => {
+                        return <TableRow key={index}>
+                            <TableCell> {paymentno} </TableCell>
+                            <TableCell>{FORMAT_CURRENCY(paymentamount)} </TableCell>
+                            <TableCell>{paymenttype} </TableCell>
+                            <TableCell>{FORMAT_DATE(duedate)} </TableCell>
+                        </TableRow>
+                    }) : <TableRow>
+                        <TableCell>Sin Pagos Registrados</TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        <TableCell></TableCell>
+                        </TableRow>}
+                </TableBody>
+            </Table>
+        </>
         :
         <Table className='payments-list-wrapper' aria-label="simple table">
             <TableBody>

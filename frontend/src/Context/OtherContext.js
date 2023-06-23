@@ -25,6 +25,8 @@ export const OtherContextProvider = ({ children }) => {
 
     const FORMAT_CURRENCY = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
+    const FORMAT_DATE = (date) => new Date(date).toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
     const CURRENT_DATE = new Date().toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
 
     const GET_CLUSTERS_UNITS = async (clusterId) => {
@@ -54,9 +56,7 @@ export const OtherContextProvider = ({ children }) => {
         return clusters;
     }
 
-    const REDIRECT_TO = (url, navigate) => {
-        navigate(url, { replace: true });
-    }
+    const REDIRECT_TO = (url, navigate) => navigate(url, { replace: true });
 
     const otherContext = {
         CLUSTERS,
@@ -71,6 +71,7 @@ export const OtherContextProvider = ({ children }) => {
         SET_POPUP_DATA,
         CURRENT_DATE,
         IS_LOADING,
+        FORMAT_DATE,
         SET_IS_LOADING
     }
 
