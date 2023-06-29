@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
@@ -16,8 +16,10 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 import Person4Icon from '@mui/icons-material/Person4';
+import Loading from "../../Shared/Loading";
 import { UnitContext } from "../../../Context/UnitContext";
 import { OtherContext } from "../../../Context/OtherContext";
+import { UserContext } from "../../../Context/UserContext";
 import './UserSelect.css';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -59,16 +61,20 @@ BootstrapDialogTitle.propTypes = {
     onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs({ open, setOpen, executives, customers, unit, type }) {
+export default function CustomizedDialogs({ open, setOpen, unit, type }) {
 
-    const text = {
-        title: type === 'customer' ? 'Clientes' : 'Ejecutivos',
-        body: type === 'customer' ? `NOTA: La unidad cambiara de estatus a RESERVADO automáticamente al asignarle un cliente.` : 'Asignar un ejecutivo encargado de esta unidad.',
-    }
+    const {
+        GET_EXECUTIVES,
+        EXECUTIVES,
+        GET_USERS,
+        USERS
+    } = useContext(UserContext);
 
     const {
         SET_SNACK,
-        GET_CLUSTERS_UNITS
+        GET_CLUSTERS_UNITS,
+        IS_UPDATING,
+        SET_IS_UPDATING
     } = useContext(OtherContext);
 
     const {
@@ -77,27 +83,43 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
         UPDATE_CUSTOMER
     } = useContext(UnitContext);
 
+    useEffect(() => {
+        GET_EXECUTIVES();
+        GET_USERS();
+    }, [])
+
+
+    const text = {
+        title: type === 'customer' ? 'Clientes' : 'Ejecutivos',
+        body: type === 'customer' ? `NOTA: La unidad cambiara de estatus a RESERVADO automáticamente al asignarle un cliente.` : 'Asignar un ejecutivo encargado de esta unidad.',
+    }
+
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
     const handleListItemClick = (_event, index) => setSelectedIndex(index);
 
     const handleUserAssign = () => {
+        SET_IS_UPDATING(true);
+
         const callback = type === 'customer' ? UPDATE_CUSTOMER : UPDATE_USER
         const data = type === 'customer' ?
-            { customerId: customers[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id, statusId: 3 } :
-            { userId: executives[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id }
+            { customerId: USERS[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id, statusId: 3 } :
+            { userId: EXECUTIVES[selectedIndex].id, unitId: unit.id, clusterId: unit.cluster.id }
 
         callback(data).then(
             () => {
-                SET_SNACK({
-                    value: true,
-                    message: 'Unidad actualizada con éxito',
-                    severity: 'success'
-                });
-                setOpen(false);
                 GET_CLUSTERS_UNITS(data.clusterId).then((units) => {
+                    setOpen(false);
                     const updatedUnit = units.find(u => u.id === unit.id)
                     SET_SELECTED_UNIT(updatedUnit);
+
+                    SET_SNACK({
+                        value: true,
+                        message: 'Unidad actualizada con éxito',
+                        severity: 'success'
+                    });
+                    SET_IS_UPDATING(false);
+                    
                 })
             }
         ).catch(ex => {
@@ -108,7 +130,7 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
     const handleClose = () => setOpen(false);
 
     const usersExist = () => {
-        const users = type === 'customer' ? customers : executives
+        const users = type === 'customer' ? USERS : EXECUTIVES
 
         if (users && users.length !== 0) {
             return users.map((user, index) => {
@@ -136,6 +158,7 @@ export default function CustomizedDialogs({ open, setOpen, executives, customers
                 aria-labelledby="customized-dialog-title"
                 open={open}
             >
+                 {IS_UPDATING ? <Loading fullscreen="true" /> : '' }
                 <BootstrapDialogTitle id="customized-dialog-title" onClose={handleClose}>
                     {text.title}
                 </BootstrapDialogTitle>

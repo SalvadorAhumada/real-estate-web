@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef, useState, useContext } from "react";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,6 +11,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import AddCardIcon from '@mui/icons-material/AddCard';
+import Loading from "../Shared/Loading";
+import { OtherContext } from "../../Context/OtherContext";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -28,6 +30,11 @@ export default function AlertDialogSlide({
     setPaymentPlan,
     setPaymentMethod
 }) {
+
+    const {
+        IS_UPDATING,
+    } = useContext(OtherContext);
+
 
     const [selectedIndexPlan, setSelectedIndexPlan] = useState(-1);
 
@@ -98,7 +105,8 @@ export default function AlertDialogSlide({
                 keepMounted
                 onClose={handleClose}
                 aria-describedby="alert-dialog-slide-description"
-            >
+                >
+                {IS_UPDATING ? <Loading fullscreen="true" /> : '' }
                 <DialogTitle>{popupTitle}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">

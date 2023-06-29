@@ -1,3 +1,8 @@
+:root {
+  --main-color: #1976d2;
+  --white: #ffffff;
+}
+
 .App {
   text-align: center;
 }
@@ -44,11 +49,11 @@
 }
 
 .muiClon:focus {
-  border: 2px solid #1976d2;
+  border: 2px solid var(--main-color);
 }
 
 .currency-input:focus-within::after {
-  color:#1976d2;
+  color:var(--main-color);
 }
 
 .currency-input::after {
@@ -68,6 +73,21 @@ body {
   height: 100%;
   background: linear-gradient(to top, #ffffff98, #ffffff7b), url('../public/img/background.jpg') no-repeat top center;
   background-size: cover;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px white;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #a7a7a7;
 }
 
 @keyframes App-logo-spin {

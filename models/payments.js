@@ -18,11 +18,12 @@ module.exports = (sequelize, DataTypes) => {
     duedate: { type: DataTypes.DATE },
     paymentdate: { type: DataTypes.DATE, defaultValue: new Date() },
     paymenttype: { type:DataTypes.STRING },
-    paymentamount: { type: DataTypes.INTEGER },
+    paymentamount: { type: DataTypes.FLOAT },
     currency: { type: DataTypes.STRING },
     url: { type: DataTypes.STRING },
     comment: { type: DataTypes.STRING },
-    otherData: { type: DataTypes.STRING, defaultValue: '{}' }
+    otherData: { type: DataTypes.STRING, defaultValue: '{ "statuses": ["Pagado", "Por Pagar"] }' },
+    paymentstatus: { type: DataTypes.STRING, defaultValue: "Por Pagar" }
   }, {
     sequelize,
     modelName: 'payments',

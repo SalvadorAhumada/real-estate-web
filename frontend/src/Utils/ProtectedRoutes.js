@@ -12,7 +12,7 @@ function PrivateRoutes() {
     const RenderPrivateComponents = () => {
         switch(TOKEN) {
             case null:
-                return <Loading />;
+                return <Loading message="Validando datos de usuario..." />;
             case false:
                 return <Navigate to='/login' />;
             default: 

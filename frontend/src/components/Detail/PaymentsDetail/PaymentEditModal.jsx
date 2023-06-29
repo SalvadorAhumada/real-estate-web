@@ -16,116 +16,94 @@ import {
     MenuItem,
     FormControl,
     Select,
-    Button
+    Button,
+    Checkbox,
+    FormGroup,
+    FormControlLabel
 } from '@mui/material';
 import dayjs from 'dayjs';
 
 
-export default function FormDialog({ open, setOpen, financial, payments }) {
+export default function FormDialog({ open, setOpen, payment, financial }) {
 
     const {
-        POPUP_DATA,
-        SET_POPUP_DATA,
         SET_SNACK,
         SET_IS_UPDATING,
+        POPUP_DATA,
+        SET_POPUP_DATA,
     } = useContext(OtherContext);
 
     const {
         GET_UNIT_PAYMENTS,
-        ADD_PAYMENT
-    } = useContext(PaymentsContext)
+        REMOVE_PAYMENT,
+        UPDATE_PAYMENT
+    } = useContext(PaymentsContext);
 
-    const [dateValue, setDateValue] = useState(dayjs(new Date()));
-
-    const [openModal, setOpenModal] = useState(false);
-
-    const [selectedType, setSelectedType] = useState('Enganche');
-
-    const [selectedPaymentState, setSelectedPaymentState] = useState('Por Pagar');
-
-    const [amount, setAmount] = useState(1000);
-
-    const [comment, setComment] = useState(null);
-
-    const changeType = e => setSelectedType(e.target.value);
-
-    const changeStatus = e => setSelectedPaymentState(e.target.value);
-
-    const handleChange = (e) => setAmount(e);
+    const [newPayment, setNewPayment] = useState({});
 
     const handleClose = () => setOpen(false);
 
-    const dateHandler = (date) => setDateValue(date);
+    const [openModal, setOpenModal] = useState(false);
 
-    const handleComment = (e) => setComment(e.target.value);
+    const [edit, setEdit] = useState(false);
 
-    const sendPayment = () => {
-
-        SET_POPUP_DATA({
-            title: '¿Agregar Pago?',
-            body: ``,
-            type: 'payment'
-        })
-        setOpenModal(true);
-
-    }
+    useEffect(() => {
+        setEdit(false);
+        setNewPayment(payment);
+    }, [payment])
 
     const onAccept = () => {
-
         SET_IS_UPDATING(true);
-
-        let paymentno = 1;
-
-        if (payments.length) paymentno = payments.length + 1;
-
-        const payment = {
-            financialId: financial.id,
-            paymentno,
-            paymentamount: parseFloat(amount),
-            paymenttype: selectedType,
-            duedate: dateValue.$d,
-            comment,
-            currency: "MXN",
-            paymentstatus: selectedPaymentState
-        };
-
-        ADD_PAYMENT(payment).then(response => {
+        REMOVE_PAYMENT({ paymentId: payment.id }).then(() => {
             GET_UNIT_PAYMENTS(financial.id);
             SET_IS_UPDATING(false);
-            /**
-             * TODO: Improve error handling
-             */
-            if(response.error) {
-                SET_SNACK({
-                    value: true,
-                    message: 'Error inesperado. Intente de nuevo.',
-                    severity: 'error'
-                })
-            } else {
-                SET_SNACK({
-                    value: true,
-                    message: 'Plan de pago actualizado con éxito.',
-                    severity: 'success'
-                })
-            }
-            setOpenModal(false);
-            handleClose();
+            setOpen(false);
 
+            SET_SNACK({
+                value: true,
+                message: 'Pago eliminado con éxito',
+                severity: 'success'
+            })
         })
+    };
+
+    const updatePayment = () => {
+        UPDATE_PAYMENT(newPayment).then(() => {
+            GET_UNIT_PAYMENTS(financial.id);
+            setOpen(false);
+
+            SET_SNACK({
+                value: true,
+                message: 'Pago actualizado con éxito',
+                severity: 'success'
+            });
+
+        });
     }
 
+    const deletePayment = () => {
+        setOpenModal(true);
+        SET_POPUP_DATA({
+            title: '¿Eliminar Pago?',
+            body: ``,
+            type: 'payment'
+        });
+    }
+
+    const editHandler = (e) => setEdit(e.target.checked);
+
     return (
-        <div>
+        <div className="payment-edit-modal">
             <Dialog open={open} onClose={handleClose}>
                 <Popup open={openModal} setOpen={setOpenModal} onAccept={onAccept} popupTitle={POPUP_DATA.title} popupBody={POPUP_DATA.body} />
-                <DialogTitle>Agregar Pago</DialogTitle>
+                <DialogTitle>Editar Pago</DialogTitle>
                 <DialogContent></DialogContent>
                 <DialogContent>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DatePicker label="Fecha de Pago"
                             format="DD/MM/YYYY"
-                            value={dateValue}
-                            onChange={(newValue) => dateHandler(newValue)}
+                            value={dayjs(payment.duedate)}
+                            onChange={(e) => setNewPayment({ ...payment, duedate: e.$d })}
                         />
                     </LocalizationProvider>
                     <p className="currency-input">
@@ -134,51 +112,58 @@ export default function FormDialog({ open, setOpen, financial, payments }) {
                             name="currency"
                             className="muiClon"
                             placeholder="Please enter a number"
-                            defaultValue={1000}
+                            defaultValue={payment.paymentamount}
                             decimalsLimit={2}
                             prefix="MXN "
-                            onValueChange={handleChange}
+                            onValueChange={(e) => setNewPayment({ ...payment, paymentamount: parseInt(e) })}
                         />
                     </p>
+                    <FormGroup>
+                        <FormControlLabel control={<Checkbox onChange={editHandler} />} label="Editar notas" />
+                    </FormGroup>
+                    &nbsp;
                     <TextField
                         sx={{ width: '100%' }}
                         id="multiline-comment"
                         label="Notas"
                         multiline
                         rows={4}
-                        onChange={handleComment}
+                        disabled={!edit}
+                        defaultValue={payment.comment}
+                        onChange={(e) => setNewPayment({ ...payment, comment: e.target.value })}
                     />
                     <FormControl sx={{ marginTop: '15px' }}>
                         <InputLabel id="type-label">Tipo</InputLabel>
-                        <Select
+                        {newPayment.paymenttype ? <Select
                             labelId="type-label"
                             id="type"
-                            value={selectedType}
+                            value={newPayment.paymenttype}
                             label="Tipo"
-                            onChange={changeType}
+                            onChange={(e) => setNewPayment({ ...payment, paymenttype: e.target.value })}
                         >
                             <MenuItem value={'Enganche'}>Enganche</MenuItem>
                             <MenuItem value={'Mensualidad'}>Mensualidad</MenuItem>
-                        </Select>
+                        </Select> : ''}
                     </FormControl>
-                    &nbsp; 
+                    &nbsp;
                     <FormControl sx={{ marginTop: '15px' }}>
                         <InputLabel id="type-label">Estatus</InputLabel>
-                        <Select
+                        {newPayment.paymentstatus ? <Select
                             labelId="status-label"
                             id="status"
-                            value={selectedPaymentState}
+                            value={newPayment.paymentstatus}
                             label="Estatus"
-                            onChange={changeStatus}
+                            onChange={(e) => setNewPayment({ ...payment, paymentstatus: e.target.value })}
                         >
                             <MenuItem value={'Por Pagar'}>Por Pagar</MenuItem>
                             <MenuItem value={'Pagado'}>Pagado</MenuItem>
-                        </Select>
+                        </Select> : ''}
                     </FormControl>
                 </DialogContent>
                 <DialogActions>
                     <Button color="secondary" onClick={handleClose}>Cancelar</Button>
-                    <Button onClick={sendPayment}>Agregar</Button>
+                    <Button color="error" onClick={deletePayment}>Eliminar Pago</Button>
+                    <Button onClick={updatePayment}>Actualizar Pago</Button>
                 </DialogActions>
             </Dialog>
         </div >

@@ -205,7 +205,7 @@ const update = async (req, res) => {
 }
 /**
  * Delete User
- * POST api/users/delete_user
+ * DELETE api/users/delete_user
  *  * @param {userId} integer
  *  * @param {currentUserId} integer
  */

@@ -1,14 +1,18 @@
 import { useContext, useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
 import { UnitContext } from '../Context/UnitContext';
-import Grid from '@mui/material/Grid';
 import UnitDetail from './Detail/UnitDetail/UnitDetail';
-import PaymentsDetails from './Detail/PaymentsDetail/PaymentsDetail';
+import PaymentsDetail from './Detail/PaymentsDetail/PaymentsDetail';
+import UnitDetailNew from './Detail/UnitDetail/UnitDetail';
 import { UserContext } from '../Context/UserContext';
 import { FinancialContext } from '../Context/FinancialContext';
 import Popup from './Shared/Popup';
 import { OtherContext } from '../Context/OtherContext';
+import {
+    Box,
+    Modal,
+    Grid,
+} from '@mui/material';
+import { PaymentsContext } from '../Context/PaymentsContext';
 
 function UnitModal({ open, close }) {
 
@@ -37,7 +41,7 @@ function UnitModal({ open, close }) {
         GET_UNITS_FINANCIAL,
         FINANCIAL_DATA,
         UPDATE_UNITS_FINANCIAL,
-        SET_FINANCIAL_DATA
+        SET_FINANCIAL_DATA,
     } = useContext(FinancialContext);
 
     const {
@@ -46,18 +50,12 @@ function UnitModal({ open, close }) {
 
     useEffect(() => {
         GET_AVAILABLE_STATUS();
-        GET_EXECUTIVES();
-        GET_USERS();
     }, [])
 
-    useEffect(() => {
-        SET_FINANCIAL_DATA({})
-        if (SELECTED_UNIT.id) {
-            GET_UNITS_FINANCIAL(SELECTED_UNIT.id);
-        }
-    }, [SELECTED_UNIT])
-
-    const handleClose = () => close(false);
+    const handleClose = () => {
+        SET_FINANCIAL_DATA({});
+        close(false);
+    }
 
     const paymentPlanHandler = () => {
         UPDATE_UNITS_FINANCIAL({ unitId: SELECTED_UNIT.id, plan: paymentPlan, method: paymentMethod }).then(() => {
@@ -66,7 +64,7 @@ function UnitModal({ open, close }) {
                 message: 'Plan de pago actualizado con éxito.',
                 severity: 'success'
             })
-            setOpenModal(false)
+            setOpenModal(false);
         })
     }
 
@@ -94,27 +92,10 @@ function UnitModal({ open, close }) {
                     />
                     <Grid container spacing={{ xs: 2, md: 2 }}>
                         <Grid item xs={12} sm={12} md={12} lg={5}>
-                            <UnitDetail
-                                unit={SELECTED_UNIT}
-                                executives={EXECUTIVES}
-                                customers={USERS}
-                                statuses={AVAILABLE_STATUS}
-                                financial={FINANCIAL_DATA}
-                                paymentMethod={paymentMethod}
-                                paymentPlan={paymentPlan}
-                                setPaymentMethod={setPaymentMethod}
-                                setPaymentPlan={setPaymentPlan}
-                                updateUnitsFinancial={UPDATE_UNITS_FINANCIAL}
-                            />
+                            <UnitDetail statuses={AVAILABLE_STATUS}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={7}>
-                            <PaymentsDetails
-                                setModalType={setModalType}
-                                unitId={SELECTED_UNIT.id}
-                                openModal={setOpenModal}
-                                financial={FINANCIAL_DATA}
-                                open={open}
-                            />
+                            <PaymentsDetail/>
                         </Grid>
                         {/*                         <Grid item xs={4}>
                             xs=4

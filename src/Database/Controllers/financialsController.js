@@ -16,7 +16,7 @@ const get_one = async (req, res) => {
         if (financialPlan) {
             res.status(200).send(financialPlan);
         } else {
-            res.status(200).send({});
+            res.status(200).send({id: 0, msg: "Unidad Sin Plan"});
         }
 
     } catch (ex) {

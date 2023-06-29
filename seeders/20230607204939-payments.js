@@ -24,6 +24,7 @@ module.exports = {
                     comment:  getData(data, 7),
                     otherData:  getData(data, 8),
                     financialId: getData(data, 9),
+                    paymentstatus: getData(data, 10),
                     createdAt: new Date(),
                     updatedAt: new Date()
                 })

@@ -9,6 +9,8 @@ export const OtherContextProvider = ({ children }) => {
 
     const [IS_LOADING, SET_IS_LOADING] = useState(true);
 
+    const [IS_UPDATING, SET_IS_UPDATING] = useState(false);
+
     const [POPUP_DATA, SET_POPUP_DATA] = useState({
         title: '',
         body: '',
@@ -25,7 +27,7 @@ export const OtherContextProvider = ({ children }) => {
 
     const FORMAT_CURRENCY = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
 
-    const FORMAT_DATE = (date) => new Date(date).toLocaleDateString('es-MX', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const FORMAT_DATE = (date) => new Date(date).toLocaleDateString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit' });
 
     const CURRENT_DATE = new Date().toLocaleDateString(undefined, { year: 'numeric', month: '2-digit', day: '2-digit' });
 
@@ -72,7 +74,9 @@ export const OtherContextProvider = ({ children }) => {
         CURRENT_DATE,
         IS_LOADING,
         FORMAT_DATE,
-        SET_IS_LOADING
+        SET_IS_LOADING,
+        IS_UPDATING, 
+        SET_IS_UPDATING
     }
 
     return <OtherContext.Provider value={otherContext}>

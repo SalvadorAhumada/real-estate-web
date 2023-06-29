@@ -55,7 +55,7 @@ export default function UsersList() {
                 break;
 
         }
-        return <Chip label={type} color={color} variant="outlined" />
+        return <Chip label={type} color={color} variant="filled" />
     }
     return (
         <>
