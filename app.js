@@ -8,6 +8,7 @@ const clusters = require('./src/Database/Routes/clusters');
 const customers = require('./src/Database/Routes/customers');
 const financials = require('./src/Database/Routes/financials');
 const payments = require('./src/Database/Routes/payments');
+const pdfCreator = require('./src/Database/Routes/utils/pdfCreator');
 const { shouldRestoreDB } = require('./src/Database/Utils/index');
 const session = require('express-session');
 const dropTable = process.argv[2];
@@ -42,6 +43,7 @@ app.use('/api/clusters', clusters);
 app.use('/api/customers', customers);
 app.use('/api/financials', financials);
 app.use('/api/payments', payments);
+app.use('/api/pdf-creator/', pdfCreator);
 
 app.listen(PORT, () => {
     console.log(`Server started on port ${PORT}`);
