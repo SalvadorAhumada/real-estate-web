@@ -67,6 +67,20 @@ export const PaymentsContextProvider = ({ children }) => {
         return updatedPayment;
     }
 
+    const GET_TOTAL_PAYMENTS = () => {
+
+        if (UNIT_PAYMENTS.noPayments) return 0;
+
+        const totalAmount = UNIT_PAYMENTS.reduce((acc, { paymentstatus, paymentamount }) => {
+            if (paymentstatus === 'Pagado') return acc + paymentamount;
+            return acc;
+        }, 0)
+        return totalAmount;
+    };
+
+    const VALIDATE_PAYMENT = (amount, unit) => {
+        return amount <= unit.price;
+    }
 
     const paymentsContext = {
         ADD_PAYMENT,
@@ -74,7 +88,9 @@ export const PaymentsContextProvider = ({ children }) => {
         UNIT_PAYMENTS,
         SET_UNIT_PAYMENTS,
         REMOVE_PAYMENT,
-        UPDATE_PAYMENT
+        UPDATE_PAYMENT,
+        GET_TOTAL_PAYMENTS,
+        VALIDATE_PAYMENT
     }
 
     return <PaymentsContext.Provider value={paymentsContext}>

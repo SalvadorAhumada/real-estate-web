@@ -1,5 +1,4 @@
 import React from 'react';
-/* import './TableShell.css'; */
 
 const NotFound = () => {
 

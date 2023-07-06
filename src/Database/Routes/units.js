@@ -6,7 +6,8 @@ const {
     status,
     update_status,
     update_user,
-    update_customer
+    update_customer,
+    filter_units
  } = unitController
 const router = express.Router();
 const userAuth = require('../Middleware/userAuth');
@@ -20,5 +21,9 @@ router.post('/update_status', userAuth.authenticateUser, update_status);
 router.post('/update_user', userAuth.authenticateUser, update_user);
 
 router.post('/update_customer', userAuth.authenticateUser, update_customer);
+
+router.get('/:searchParams', 
+/* userAuth.authenticateUser, */
+filter_units);
 
 module.exports = router

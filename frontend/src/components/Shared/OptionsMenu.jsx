@@ -1,34 +1,38 @@
 import { useState, useContext } from "react";
-import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
+import {
+    IconButton,
+    Typography,
+    Menu,
+    MenuItem,
+    ListItemIcon
+} from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { OtherContext } from "../../Context/OtherContext";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import GridOnIcon from '@mui/icons-material/GridOn';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Typography from '@mui/material/Typography';
-import XLSX from "xlsx";
 import AddIcon from '@mui/icons-material/Add';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import FilterModal from '../FilterModal';
+import { OtherContext } from "../../Context/OtherContext";
+import XLSX from "xlsx";
 import './OptionsMenu.css';
 
-const ITEM_HEIGHT = 48;
-
 export default function LongMenu({ cluster, type, openCreate }) {
+
+    const ITEM_HEIGHT = 48;
+
+    const [filter, setFilter] = useState(false);
 
     const {
         CURRENT_DATE
     } = useContext(OtherContext);
 
-
     const [anchorEl, setAnchorEl] = useState(null);
+
     const open = Boolean(anchorEl);
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
+
+    const handleClick = (event) => setAnchorEl(event.currentTarget);
+
+    const handleClose = () => setAnchorEl(null);
 
     const printDiv = () => window.print()
 
@@ -38,30 +42,35 @@ export default function LongMenu({ cluster, type, openCreate }) {
 
         return XLSX.writeFile(
             wb,
-            `${CURRENT_DATE}_unidades_${cluster}.xlsx`
+            `${CURRENT_DATE}_unidades_${cluster.name}.xlsx`
         );
 
     }
 
+    const openFilter = () => setFilter(true);
+
     const showExecutiveModal = () => openCreate(true);
 
     let options;
-    switch(type) {
+
+    switch (type) {
         case 'units':
             options = [
                 { name: 'Descargar PDF', callback: printDiv, icon: <PictureAsPdfIcon fontSize="small" /> },
-                { name: 'Descargar XLSX', callback: getSheet, icon: <GridOnIcon fontSize="small" /> }
+                { name: 'Descargar XLSX', callback: getSheet, icon: <GridOnIcon fontSize="small" /> },
+                { name: 'Filtar unidades', callback: openFilter, icon: <FilterAltIcon fontSize="small" /> }
             ];
             break;
         case 'users':
             options = [
                 { name: 'Agregar Ejecutivo', callback: showExecutiveModal, icon: <AddIcon fontSize="small" /> }
             ]
-        break;
+            break;
     }
 
     return (
         <div className="config-menu">
+            <FilterModal open={filter} setOpen={setFilter} cluster={cluster} />
             <IconButton
                 aria-label="more"
                 id="long-button"
@@ -93,7 +102,7 @@ export default function LongMenu({ cluster, type, openCreate }) {
                             {icon}
                         </ListItemIcon>
                         <Typography variant="body2" color="text.secondary">
-                        {name}
+                            {name}
                         </Typography>
                     </MenuItem>
                 ))}

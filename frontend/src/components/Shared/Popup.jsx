@@ -23,12 +23,12 @@ export default function AlertDialogSlide({
     setOpen,
     popupTitle,
     popupBody,
-    onCancel,
     onAccept,
     modalType,
     financialData,
     setPaymentPlan,
-    setPaymentMethod
+    setPaymentMethod,
+    cancelMsg
 }) {
 
     const {
@@ -60,7 +60,6 @@ export default function AlertDialogSlide({
             case 'financial':
 
                 if (!financialData || !financialData.plansoptions) return;
-
 
                 return <>
                 <List component="nav" aria-label="unit executives">
@@ -94,6 +93,8 @@ export default function AlertDialogSlide({
                         </ListItemButton>
                     })}
                 </List></>
+            default:
+                return <></>
         }
     }
 
@@ -115,7 +116,7 @@ export default function AlertDialogSlide({
                     {getOptions()}
                 </DialogContent>
                 <DialogActions>
-                    <Button color="secondary" onClick={handleClose}>Cancelar</Button>
+                    <Button color="secondary" onClick={handleClose}>{cancelMsg ? cancelMsg : 'Cancelar'}</Button>
                     <Button onClick={onAccept}>Aceptar</Button>
                 </DialogActions>
             </Dialog>

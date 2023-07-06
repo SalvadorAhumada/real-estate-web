@@ -2,8 +2,6 @@ import { useContext, useEffect, useState } from 'react';
 import { UnitContext } from '../Context/UnitContext';
 import UnitDetail from './Detail/UnitDetail/UnitDetail';
 import PaymentsDetail from './Detail/PaymentsDetail/PaymentsDetail';
-import UnitDetailNew from './Detail/UnitDetail/UnitDetail';
-import { UserContext } from '../Context/UserContext';
 import { FinancialContext } from '../Context/FinancialContext';
 import Popup from './Shared/Popup';
 import { OtherContext } from '../Context/OtherContext';
@@ -12,7 +10,6 @@ import {
     Modal,
     Grid,
 } from '@mui/material';
-import { PaymentsContext } from '../Context/PaymentsContext';
 
 function UnitModal({ open, close }) {
 
@@ -31,14 +28,6 @@ function UnitModal({ open, close }) {
     } = useContext(UnitContext);
 
     const {
-        GET_EXECUTIVES,
-        EXECUTIVES,
-        GET_USERS,
-        USERS
-    } = useContext(UserContext);
-
-    const {
-        GET_UNITS_FINANCIAL,
         FINANCIAL_DATA,
         UPDATE_UNITS_FINANCIAL,
         SET_FINANCIAL_DATA,
@@ -89,13 +78,14 @@ function UnitModal({ open, close }) {
                         financialData={FINANCIAL_DATA}
                         setPaymentPlan={setPaymentPlan}
                         setPaymentMethod={setPaymentMethod}
+                        cancelMsg={'Continuar sin asignar'}
                     />
                     <Grid container spacing={{ xs: 2, md: 2 }}>
                         <Grid item xs={12} sm={12} md={12} lg={5}>
                             <UnitDetail statuses={AVAILABLE_STATUS}/>
                         </Grid>
                         <Grid item xs={12} sm={12} md={12} lg={7}>
-                            <PaymentsDetail/>
+                            <PaymentsDetail setOpen={setOpenModal} setModalType={setModalType}/>
                         </Grid>
                         {/*                         <Grid item xs={4}>
                             xs=4

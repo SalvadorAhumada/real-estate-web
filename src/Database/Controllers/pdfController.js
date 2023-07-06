@@ -10,31 +10,21 @@ const printer = new PdfPrinter(fontDescriptors);
  * POST api/pdf-creator/payments
  */
 const create_payments = async (req, res) => {
-    /**
-     * TODO: Connect to frontend
-     */
-    // payments = req.body.payments
-    let payments = [];
+    
+    const payments = req.body.payments;
+    const unit = req.body.unit;
 
-    // payments temp example
-    payments = [
-        {
-            "id": 6,
-            "paymentno": 5,
-        //...
-        }
-    ]
+    let dd = createPaymentsPdf(payments, unit);
 
-    let dd = createPaymentsPdf(payments);
-
-    const pdfDoc = printer.createPdfKitDocument(dd, { autoPrint: true });
+    const pdfDoc = printer.createPdfKitDocument(dd);
+    
     res.contentType('application/pdf');
+    
     pdfDoc.pipe(res);
+    
     pdfDoc.end();
 }
 
 module.exports = {
     create_payments
-}; {
-
-}
+};

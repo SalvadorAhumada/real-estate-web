@@ -1,4 +1,5 @@
 import { createContext, useState } from 'react';
+import { hostUrl }  from './index';
 
 export const FinancialContext = createContext({});
 
@@ -19,7 +20,7 @@ export const FinancialContextProvider = ({ children }) => {
     const [FINANCIAL_DATA, SET_FINANCIAL_DATA] = useState({});
 
     const UPDATE_UNITS_FINANCIAL = async (data) => {
-        let updatedPlan = await fetch(`http://localhost:3030/api/financials`, {
+        let updatedPlan = await fetch(`${hostUrl}/api/financials`, {
             method: methods.POST,
             credentials,
             headers,
@@ -32,7 +33,7 @@ export const FinancialContextProvider = ({ children }) => {
     }
 
     const GET_UNITS_FINANCIAL = async (unitId) => {
-        let updatedPlan = await fetch(`http://localhost:3030/api/financials/${unitId}`, {
+        let updatedPlan = await fetch(`${hostUrl}/api/financials/${unitId}`, {
             method: methods.GET,
             credentials,
             headers

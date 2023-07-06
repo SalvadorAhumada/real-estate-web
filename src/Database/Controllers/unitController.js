@@ -2,6 +2,19 @@ const db = require("../../../models");
 require("dotenv").config();
 const UNITS = db.units;
 const STATUS = db.status;
+const CLUSTERS = db.clusters;
+const CUSTOMERS = db.customers;
+const USERS = db.users;
+const sequelize = db.sequelize;
+var url = require('url');
+const Op = require('sequelize').Op;
+
+
+const availableStatus = {
+    DISPONIBLE: 1,
+    VENDIDO: 2,
+    RESERVADO: 3
+}
 
 const all = async (_req, res) => {
 
@@ -94,10 +107,56 @@ const update_customer = async (req, res) => {
 
 }
 
+/**
+ * Filter list of units
+ * GET /api/units/cluster?
+ * @param { filterData } Object 
+ */
+const filter_units = async (req, res) => {
+
+    try {
+
+        let params = req.query;
+
+        let query = {
+            clusterId: parseInt(params.clusterId),
+            price: {
+                [Op.between]: [params.minPrice, params.maxPrice]
+            }
+        };
+
+        if (params.unit !== '') query.name = params.unit;
+
+        if (params.status) {
+            if (typeof params.status === 'string') {
+                query.statusId = [params.status]
+            } else {
+                query.statusId = params.status
+            }
+        }
+
+        const units = await UNITS.findAll({
+            where: query,
+            include: [CLUSTERS, STATUS, USERS, CUSTOMERS],
+            order: [
+                ['id', 'ASC']
+            ]
+        });
+
+        return res.status(200).send(units);
+
+    } catch (ex) {
+        console.log(ex);
+        return res.status(400).send({ msg: "Error!" });
+
+    }
+}
+
 module.exports = {
     all,
     status,
     update_status,
     update_user,
-    update_customer
+    update_customer,
+    filter_units
 };

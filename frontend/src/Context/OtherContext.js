@@ -3,6 +3,18 @@ import { hostUrl }  from './index';
 
 export const OtherContext = createContext({});
 
+const headers = {
+    'Content-Type': 'application/json',
+};
+
+const credentials = 'include';
+
+const methods = {
+    POST: 'POST',
+    GET: 'GET',
+    DELETE: 'DELETE'
+};
+
 export const OtherContextProvider = ({ children }) => {
 
     const [CLUSTERS, SET_CLUSTERS] = useState([]);
@@ -23,6 +35,8 @@ export const OtherContextProvider = ({ children }) => {
         severity: null
     });
 
+    const [IS_FILTERING, SET_IS_FILTERING] = useState(false);
+
     const [CLUSTER_UNITS, SET_CLUSTER_UNITS] = useState([]);
 
     const FORMAT_CURRENCY = (amount) => new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' }).format(amount);
@@ -33,11 +47,9 @@ export const OtherContextProvider = ({ children }) => {
 
     const GET_CLUSTERS_UNITS = async (clusterId) => {
         let units = await fetch(`${hostUrl}/api/clusters/${clusterId}`, {
-            method: 'GET',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.GET,
+            credentials,
+            headers,
         });
         units = await units.json();
         SET_CLUSTER_UNITS(units);
@@ -47,11 +59,9 @@ export const OtherContextProvider = ({ children }) => {
 
     const GET_CLUSTERS = async () => {
         let clusters = await fetch(`${hostUrl}/api/clusters/`, {
-            method: 'GET',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            method: methods.GET,
+            credentials,
+            headers,
         });
         clusters = await clusters.json();
         SET_CLUSTERS(clusters.clusters);
@@ -59,6 +69,17 @@ export const OtherContextProvider = ({ children }) => {
     }
 
     const REDIRECT_TO = (url, navigate) => navigate(url, { replace: true });
+
+    const GENERATE_PDF_PAYMENTS = async (payments, unit) => {
+        let pdf = await fetch(`${hostUrl}/api/pdf-creator/payments/`, {
+            method: methods.POST,
+            credentials,
+            headers,
+            body: JSON.stringify({payments, unit})
+        });
+        pdf = await pdf.blob();
+        return pdf;
+    }
 
     const otherContext = {
         CLUSTERS,
@@ -76,7 +97,11 @@ export const OtherContextProvider = ({ children }) => {
         FORMAT_DATE,
         SET_IS_LOADING,
         IS_UPDATING, 
-        SET_IS_UPDATING
+        SET_IS_UPDATING,
+        GENERATE_PDF_PAYMENTS,
+        SET_CLUSTER_UNITS,
+        IS_FILTERING, 
+        SET_IS_FILTERING
     }
 
     return <OtherContext.Provider value={otherContext}>

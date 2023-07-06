@@ -24,7 +24,7 @@ import {
 import dayjs from 'dayjs';
 
 
-export default function FormDialog({ open, setOpen, payment, financial }) {
+export default function FormDialog({ open, setOpen, payment, financial, unit }) {
 
     const {
         SET_SNACK,
@@ -36,7 +36,8 @@ export default function FormDialog({ open, setOpen, payment, financial }) {
     const {
         GET_UNIT_PAYMENTS,
         REMOVE_PAYMENT,
-        UPDATE_PAYMENT
+        UPDATE_PAYMENT,
+        VALIDATE_PAYMENT
     } = useContext(PaymentsContext);
 
     const [newPayment, setNewPayment] = useState({});
@@ -50,11 +51,12 @@ export default function FormDialog({ open, setOpen, payment, financial }) {
     useEffect(() => {
         setEdit(false);
         setNewPayment(payment);
-    }, [payment])
+    }, [payment]);
 
     const onAccept = () => {
         SET_IS_UPDATING(true);
         REMOVE_PAYMENT({ paymentId: payment.id }).then(() => {
+            setOpenModal(false);
             GET_UNIT_PAYMENTS(financial.id);
             SET_IS_UPDATING(false);
             setOpen(false);
@@ -68,6 +70,17 @@ export default function FormDialog({ open, setOpen, payment, financial }) {
     };
 
     const updatePayment = () => {
+
+        const isValid = VALIDATE_PAYMENT(payment.paymentamount, unit);
+
+        if (!isValid) {
+            return SET_SNACK({
+                value: true,
+                message: 'Pago fuera de limite',
+                severity: 'error'
+            })
+        }
+
         UPDATE_PAYMENT(newPayment).then(() => {
             GET_UNIT_PAYMENTS(financial.id);
             setOpen(false);
@@ -82,7 +95,17 @@ export default function FormDialog({ open, setOpen, payment, financial }) {
     }
 
     const deletePayment = () => {
+
+        if (payment.paymentstatus === "Pagado") {
+
+            return SET_SNACK({
+                value: true,
+                message: 'No se puede eliminar pagos con estado "Pagado"',
+                severity: 'error'
+            });
+        }
         setOpenModal(true);
+
         SET_POPUP_DATA({
             title: '¿Eliminar Pago?',
             body: ``,

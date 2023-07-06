@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import PriceChangeIcon from '@mui/icons-material/PriceChange';
+import DownloadIcon from '@mui/icons-material/Download';
 import {
     Typography,
     TableHead,
@@ -12,7 +13,9 @@ import {
     TableBody,
     Table,
     Chip,
-    LinearProgress
+    LinearProgress,
+    Alert,
+    IconButton
 } from '@mui/material';
 import PaymentModal from './PaymentModal';
 import PaymentEditModal from './PaymentEditModal';
@@ -24,7 +27,7 @@ import { UnitContext } from '../../../Context/UnitContext';
 import { OtherContext } from '../../../Context/OtherContext';
 import './PaymentsDetail.css';
 
-export default function PaymentsDetailNew() {
+export default function PaymentsDetail({ setModalType, setOpen }) {
 
     const [isLoading, setIsLoading] = useState(true);
 
@@ -52,13 +55,15 @@ export default function PaymentsDetailNew() {
         SET_IS_UPDATING,
         SET_SNACK,
         FORMAT_CURRENCY,
-        FORMAT_DATE
+        FORMAT_DATE,
+        GENERATE_PDF_PAYMENTS
     } = useContext(OtherContext);
 
     const {
         UNIT_PAYMENTS,
         GET_UNIT_PAYMENTS,
-        SET_UNIT_PAYMENTS
+        SET_UNIT_PAYMENTS,
+        GET_TOTAL_PAYMENTS
     } = useContext(PaymentsContext);
 
     useEffect(() => {
@@ -81,13 +86,38 @@ export default function PaymentsDetailNew() {
             setOpenModal(false);
             SET_SNACK({
                 value: true,
-                message: 'Unidad Actualizada',
+                message: 'Plan de Pago creado',
                 severity: 'success'
             });
+            setOpen(true);
+            setModalType('financial');
         })
     };
 
     const openPaymentModal = () => setOpenPayment(true);
+
+    const downloadPayments = () => {
+
+        if(UNIT_PAYMENTS.length === 0 || UNIT_PAYMENTS.noPayments) {
+            return SET_SNACK({
+                value: true,
+                message: 'No hay Pagos registrados',
+                severity: 'warning'
+            });
+        }
+
+        GENERATE_PDF_PAYMENTS(UNIT_PAYMENTS, SELECTED_UNIT).then(pdf => {
+            const url = window.URL.createObjectURL(pdf);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `Registro de pagos unidad ${SELECTED_UNIT.name}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        })
+    }
 
     if (isLoading) return <TableContainer component={Paper}><Loading message="Cargando Finanzas..." /></TableContainer>;
 
@@ -95,7 +125,7 @@ export default function PaymentsDetailNew() {
         height100: { height: '100%', textAlign: 'center', position: 'relative' },
         alignCenter: { textAlign: 'center', margin: 1 },
         priceIcon: { fontSize: '100px', opacity: 0.3 },
-        leftAlign: { textAlign: 'right', margin: '10px' },
+        flexMenu: { margin: '10px', display: 'flex', justifyContent: 'space-between' },
         rightAlign: { textAlign: 'right' },
         absolute: { position: 'absolute', bottom: 0, borderTop: '1px solid #e0e0e0', background: 'white' }
     }
@@ -126,22 +156,11 @@ export default function PaymentsDetailNew() {
         setOpenEditPayment(true);
     }
 
-    const getTotalPayments = () => {
-
-        if (UNIT_PAYMENTS.noPayments) return 0;
-
-        const totalAmount = UNIT_PAYMENTS.reduce((acc, { paymentstatus, paymentamount }) => {
-            if (paymentstatus === 'Pagado') return acc + paymentamount;
-            return acc;
-        }, 0)
-        return totalAmount;
-    };
-
     const getPaidValue = () => {
-        const paid = getTotalPayments();
+        const paid = GET_TOTAL_PAYMENTS();
         const price = SELECTED_UNIT.price;
-        const percentage = (paid * 100) / price;        ;
-        if(percentage > 100) return 100;
+        const percentage = (paid * 100) / price;
+        if (percentage > 100) return 100;
         return percentage;
     }
 
@@ -150,6 +169,8 @@ export default function PaymentsDetailNew() {
         if (row % 2 === 0) styleObj.background = '#cbcbcb1c';
         return styleObj;
     }
+
+    const isOverpaid = GET_TOTAL_PAYMENTS() > SELECTED_UNIT.price
 
     let hasPaymentPlan;
 
@@ -179,9 +200,23 @@ export default function PaymentsDetailNew() {
     } else {
 
         hasPaymentPlan = <>
-            <PaymentModal open={openPayment} setOpen={setOpenPayment} financial={FINANCIAL_DATA} payments={UNIT_PAYMENTS} />
-            <PaymentEditModal financial={FINANCIAL_DATA} open={openEditPayment} setOpen={setOpenEditPayment} payment={selectedPayment} />
-            <Box sx={css.leftAlign}>
+            <PaymentModal
+                open={openPayment}
+                setOpen={setOpenPayment}
+                financial={FINANCIAL_DATA}
+                payments={UNIT_PAYMENTS}
+                unit={SELECTED_UNIT}
+            />
+            <PaymentEditModal
+                financial={FINANCIAL_DATA}
+                open={openEditPayment}
+                setOpen={setOpenEditPayment}
+                payment={selectedPayment}
+                unit={SELECTED_UNIT} />
+            <Box sx={css.flexMenu}>
+                <IconButton variant="contained" size="small" onClick={downloadPayments} title="Descargar Pagos">
+                    <DownloadIcon fontSize="inherit"/>
+                </IconButton>
                 <Button variant="contained" size="small" onClick={openPaymentModal}>
                     Agregar Pago
                 </Button>
@@ -227,7 +262,12 @@ export default function PaymentsDetailNew() {
                         <TableCell></TableCell>
                         <TableCell></TableCell>
                         <TableCell colSpan={2} sx={css.rightAlign}>
-                            <b>{FORMAT_CURRENCY(getTotalPayments())} / {FORMAT_CURRENCY(SELECTED_UNIT.price)}</b>
+                            <span style={isOverpaid ? { color: '#ef7918' } : {}}>
+                                <b>{FORMAT_CURRENCY(GET_TOTAL_PAYMENTS())}</b>
+                            </span>
+                            <span>
+                                <b>/ {FORMAT_CURRENCY(SELECTED_UNIT.price)}</b>
+                            </span>
                         </TableCell>
                     </TableRow>
                 </TableBody>
@@ -247,6 +287,7 @@ export default function PaymentsDetailNew() {
                 </Typography>
                 {hasPaymentPlan}
             </TableContainer>
+            {isOverpaid ? <Alert severity="warning">El total de los pagos sobrepasa el precio de la unidad.</Alert> : ''}
         </div>
     );
 }

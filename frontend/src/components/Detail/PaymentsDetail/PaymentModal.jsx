@@ -21,7 +21,7 @@ import {
 import dayjs from 'dayjs';
 
 
-export default function FormDialog({ open, setOpen, financial, payments }) {
+export default function FormDialog({ open, setOpen, financial, payments, unit }) {
 
     const {
         POPUP_DATA,
@@ -32,7 +32,8 @@ export default function FormDialog({ open, setOpen, financial, payments }) {
 
     const {
         GET_UNIT_PAYMENTS,
-        ADD_PAYMENT
+        ADD_PAYMENT,
+        VALIDATE_PAYMENT
     } = useContext(PaymentsContext)
 
     const [dateValue, setDateValue] = useState(dayjs(new Date()));
@@ -60,6 +61,16 @@ export default function FormDialog({ open, setOpen, financial, payments }) {
     const handleComment = (e) => setComment(e.target.value);
 
     const sendPayment = () => {
+
+        const isValid = VALIDATE_PAYMENT(amount, unit);
+
+        if(!isValid) {
+            return SET_SNACK({
+                value: true,
+                message: 'Pago fuera de limite',
+                severity: 'error'
+            })
+        }
 
         SET_POPUP_DATA({
             title: '¿Agregar Pago?',

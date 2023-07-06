@@ -52,7 +52,7 @@ function App() {
         <Route element={<Login navigate={navigate} />} path="/login" />
         <Route element={<PrivateRoutes />}>
           <Route element={<Main navigate={navigate} />} path="/main" exact />
-          <Route element={<DetailList />} path="/main/detail/:clusterName" exact />
+          <Route element={<DetailList navigate={navigate} />}  path="/main/detail/:clusterName" exact />
           <Route element={<Users />} path="/users" exact />
         </Route>
         <Route path="*" element={<NotFound />} />

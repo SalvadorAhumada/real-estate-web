@@ -1,4 +1,17 @@
 import { createContext, useState } from 'react';
+import { hostUrl }  from './index';
+
+const headers = {
+    'Content-Type': 'application/json',
+};
+
+const credentials = 'include';
+
+const methods = {
+    POST: 'POST',
+    GET: 'GET',
+    DELETE: 'DELETE'
+};
 
 export const UnitContext = createContext({});
 
@@ -6,17 +19,15 @@ export const UnitContextProvider = ({ children }) => {
 
     const [TOTAL_COUNT, SET_TOTAL_COUNT] = useState([]);
 
-    const [AVAILABLE_STATUS, SET_AVAILABLE_STATUS] = useState({});
+    const [AVAILABLE_STATUS, SET_AVAILABLE_STATUS] = useState([]);
 
     const [SELECTED_UNIT, SET_SELECTED_UNIT] = useState({});
 
     const GET_AVAILABLE_STATUS = async () => {
-        let status = await fetch('http://localhost:3030/api/units/status', {
-            method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json',
-            }
+        let status = await fetch(`${hostUrl}/api/units/status`, {
+            method: methods.GET,
+            credentials,
+            headers
         });
         status = await status.json();
         SET_AVAILABLE_STATUS(status.data);
@@ -24,12 +35,10 @@ export const UnitContextProvider = ({ children }) => {
     }
 
     const GET_COUNT = async () => {
-        let units = await fetch('http://localhost:3030/api/clusters/count', {
-            method: 'GET',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        let units = await fetch(`${hostUrl}/api/clusters/count`, {
+            method: methods.GET,
+            credentials,
+            headers
         });
         units = await units.json();
         GET_AVAILABLE_STATUS();
@@ -38,12 +47,10 @@ export const UnitContextProvider = ({ children }) => {
     }
 
     const UPDATE_STATUS = async (data) => {
-        let updatedUnit = await fetch('http://localhost:3030/api/units/update_status', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        let updatedUnit = await fetch(`${hostUrl}/api/units/update_status`, {
+            method: methods.POST,
+            credentials,
+            headers,
             body: JSON.stringify(data)
         });
         updatedUnit = await updatedUnit.json();
@@ -51,12 +58,10 @@ export const UnitContextProvider = ({ children }) => {
     }
 
     const UPDATE_USER = async (data) => {
-        let updatedUser = await fetch('http://localhost:3030/api/units/update_user', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        let updatedUser = await fetch(`${hostUrl}/api/units/update_user`, {
+            method: methods.POST,
+            credentials,
+            headers,
             body: JSON.stringify(data)
         });
         updatedUser = await updatedUser.json();
@@ -64,16 +69,24 @@ export const UnitContextProvider = ({ children }) => {
     }
 
     const UPDATE_CUSTOMER = async (data) => {
-        let updatedCustomer = await fetch('http://localhost:3030/api/units/update_customer', {
-            method: 'POST',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
+        let updatedCustomer = await fetch(`${hostUrl}/api/units/update_customer`, {
+            method: methods.POST,
+            credentials,
+            headers,
             body: JSON.stringify(data)
         });
         updatedCustomer = await updatedCustomer.json();
         return updatedCustomer;
+    }
+
+    const FILTER_UNITS = async(params) => {
+        let filter = await fetch(`${hostUrl}/api/units/cluster?${params}`, {
+            method: methods.GET,
+            credentials,
+            headers
+        });
+        filter = await filter.json();
+        return filter;
     }
 
     const userContext = {
@@ -85,7 +98,8 @@ export const UnitContextProvider = ({ children }) => {
         AVAILABLE_STATUS,
         UPDATE_STATUS,
         UPDATE_USER,
-        UPDATE_CUSTOMER
+        UPDATE_CUSTOMER,
+        FILTER_UNITS
     }
 
     return <UnitContext.Provider value={userContext}>
